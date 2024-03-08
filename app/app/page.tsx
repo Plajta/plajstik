@@ -1,5 +1,3 @@
 export default function Home() {
-    return (
-        <div className="text-3xl font-bold">Plajstick</div>
-    );
+    return <div className="text-3xl font-bold">Plajstick</div>;
 }
