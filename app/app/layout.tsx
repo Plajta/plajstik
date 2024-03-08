@@ -32,7 +32,7 @@ export default function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning>
             <head />
-            <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
+            <body className={cn("min-h-screen bg-background font-sans antialiased p-2", fontSans.variable)}>
                 <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
                     <ThemeSwitcher />
                     {children}
