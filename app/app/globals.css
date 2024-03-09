@@ -18,9 +18,9 @@
 .annotation-menu::before {
     content: "";
     position: absolute;
-    top: 50px;
-    left: -58px;
-    transform: rotate(150deg);
+    top: 63px;
+    left: -80px;
+    transform: rotate(141deg);
     height: 2px;
-    width: 64px;
+    width: 91px;
 }
