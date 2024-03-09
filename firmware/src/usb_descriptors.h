@@ -1,4 +1,4 @@
-/*
+/* 
  * The MIT License (MIT)
  *
  * Copyright (c) 2019 Ha Thach (tinyusb.org)
@@ -22,19 +22,16 @@
  * THE SOFTWARE.
  */
 
-/*
- * Lightly modified from dev_hid_composite example.
- */
-
 #ifndef USB_DESCRIPTORS_H_
 #define USB_DESCRIPTORS_H_
 
-#define ATTRIBUTE_PACKED  __attribute__((packed, aligned(1)))
-
-typedef struct ATTRIBUTE_PACKED {
-	int8_t xAxis;
-	int8_t yAxis;
-	uint8_t buttons[3];
-} HID_JoystickReport_Data_t;
+enum
+{
+  REPORT_ID_KEYBOARD = 1,
+  REPORT_ID_MOUSE,
+  REPORT_ID_CONSUMER_CONTROL,
+  REPORT_ID_GAMEPAD,
+  REPORT_ID_COUNT
+};
 
 #endif /* USB_DESCRIPTORS_H_ */
