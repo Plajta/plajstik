@@ -4,6 +4,8 @@ import React, { useMemo } from "react";
 import { Card, CardContent } from "~/components/ui/card";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { Separator } from "~/components/ui/separator";
+import { keybinds } from "~/keybinds";
+
 import type { Object3D } from "three";
 import type { LabelMenu } from "~/components/joystick-model";
 
@@ -12,8 +14,6 @@ interface ButtonLabelProps {
     labelMenus: LabelMenu[];
     setLabelMenus: React.Dispatch<React.SetStateAction<LabelMenu[]>>;
 }
-
-const tags = Array.from({ length: 50 }).map((_, i, a) => `v1.2.0-beta.${a.length - i}`);
 
 export function ButtonLabel({ object, labelMenus, setLabelMenus }: ButtonLabelProps) {
     const menu = useMemo(() => labelMenus.find((item) => item.id === object.uuid), [labelMenus]);
@@ -50,10 +50,10 @@ export function ButtonLabel({ object, labelMenus, setLabelMenus }: ButtonLabelPr
 
                         <ScrollArea className="h-72 w-48 p-2">
                             <div>
-                                {tags.map((tag) => (
+                                {keybinds.map((tag) => (
                                     <>
-                                        <div key={tag} className="text-sm">
-                                            {tag}
+                                        <div key={tag.name} className="text-sm">
+                                            {tag.label}
                                         </div>
 
                                         <Separator className="my-2" />
