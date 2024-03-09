@@ -11,6 +11,8 @@ target_sources(${PROJECT_NAME} PRIVATE
   src/usb_descriptors.c
   src/usb_descriptors.h
   src/tusb_config.h
+  include/tiny-json.c
+  include/tiny-json.h
 )
 
 pico_enable_stdio_usb(${PROJECT_NAME} 1)

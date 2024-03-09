@@ -34,6 +34,8 @@
 
 #include "usb_descriptors.h"
 
+#include "../include/tiny-json.h"
+
 #define TU_BIT(n)              (1UL << (n))
 
 /*
@@ -64,6 +66,7 @@ int dpad[] = {6, 7, 8, 9}; // Up, right, down, left
 //--------------------------------------------------------------------+
 
 void hid_task(void);
+void cdc_task(void);
 
 /*------------- MAIN -------------*/
 int main(void)
@@ -88,11 +91,9 @@ int main(void)
   adc_gpio_init(26);
   adc_gpio_init(27);
 
-  while (1)
-  {
-    tud_task(); // tinyusb device task
-    // tud_cdc_write_str("Test\n");
-
+  while (1){
+    tud_task();
+    cdc_task();
     hid_task();
   }
 }
@@ -187,6 +188,21 @@ void hid_task(void)
   {
     // Send the 1st of report chain, the rest will be sent by tud_hid_report_complete_cb()
     send_hid_report(btn);
+  }
+}
+
+void cdc_task(void){
+  if (tud_cdc_connected()){
+    // connected and there are data available
+    if (tud_cdc_available()) {
+      char buf[64];
+      uint32_t count = tud_cdc_read(buf, sizeof(buf));
+      (void) count;
+
+      tud_cdc_write(buf, count);
+      tud_cdc_write_flush();
+      tud_cdc_read_flush();
+    }
   }
 }
 
