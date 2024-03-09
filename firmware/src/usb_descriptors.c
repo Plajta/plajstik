@@ -194,7 +194,7 @@ char const* string_desc_arr [] =
   "Plajta Corp.",                             // 1: Manufacturer
   "Plajstik one-hand controller", // 2: Product
   serial,                        // 3: Serials, uses the flash ID
-  "Plastik serial",          // 4: CDC Interface
+  "Plajstik serial",          // 4: CDC Interface
 };
 
 static uint16_t _desc_str[64];
