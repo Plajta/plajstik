@@ -66,7 +66,7 @@ export function ButtonLabel({ keymap, setKeymap, object, labelMenus, setLabelMen
                                     <>
                                         <div
                                             key={tag.name}
-                                            className="text-sm flex gap-2 justify-between"
+                                            className="text-sm flex gap-2 justify-between cursor-pointer"
                                             onClick={() =>
                                                 setKeymap((prev) => ({
                                                     ...prev,
