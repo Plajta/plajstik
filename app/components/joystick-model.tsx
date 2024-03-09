@@ -4,13 +4,18 @@ import { useGLTF, Html } from "@react-three/drei";
 import { ButtonLabel } from "~/components/button-label";
 import { useEffect, useState } from "react";
 import { Object3D } from "three";
+import { Keymap } from "~/app/page";
 
 export interface LabelMenu {
     id: string;
     opened: boolean;
 }
 
-export function JoystickModel() {
+interface JoystickModelProps {
+    keymap: Keymap;
+}
+
+export function JoystickModel({ keymap }: JoystickModelProps) {
     const { scene } = useGLTF("/models/joystick.glb");
 
     const [labelMenus, setLabelMenus] = useState<LabelMenu[]>([]);
@@ -36,7 +41,12 @@ export function JoystickModel() {
                     position={[object.position.x, object.position.y, object.position.z]}
                     distanceFactor={0.25}
                 >
-                    <ButtonLabel object={object} labelMenus={labelMenus} setLabelMenus={setLabelMenus} />
+                    <ButtonLabel
+                        keymap={keymap}
+                        object={object}
+                        labelMenus={labelMenus}
+                        setLabelMenus={setLabelMenus}
+                    />
                 </Html>
             ))}
         </primitive>

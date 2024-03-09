@@ -8,16 +8,22 @@ import { keybinds, buttons } from "~/constants";
 
 import type { Object3D } from "three";
 import type { LabelMenu } from "~/components/joystick-model";
+import type { Keymap } from "~/app/page";
 
 interface ButtonLabelProps {
+    keymap: Keymap;
     object: Object3D;
     labelMenus: LabelMenu[];
     setLabelMenus: React.Dispatch<React.SetStateAction<LabelMenu[]>>;
 }
 
-export function ButtonLabel({ object, labelMenus, setLabelMenus }: ButtonLabelProps) {
+export function ButtonLabel({ keymap, object, labelMenus, setLabelMenus }: ButtonLabelProps) {
     const menu = useMemo(() => labelMenus.find((item) => item.id === object.uuid), [labelMenus]);
     const button = useMemo(() => buttons.find((button) => button.name === object.userData.prop), [object]);
+    const keybinding = useMemo(
+        () => keybinds.find((keybinding) => keybinding.name === keymap.keybindings[button?.name]),
+        [keymap],
+    );
 
     return (
         <div className="annotation before:bg-slate-950">
@@ -38,11 +44,11 @@ export function ButtonLabel({ object, labelMenus, setLabelMenus }: ButtonLabelPr
                         )
                     }
                 >
-                    {button && button.label}
+                    {button && button.label} - {keybinding?.label}
                 </CardContent>
             </Card>
 
-            {menu && menu.opened && (
+            {menu && button && keybinding && menu.opened && (
                 <Card className="shadow-none z-40 absolute left-72 bottom-[-150px] annotation-menu before:bg-slate-950">
                     <CardContent className="select-none p-0">
                         <h4 className="text-sm font-medium leading-none p-2">Keybindy</h4>
@@ -53,7 +59,7 @@ export function ButtonLabel({ object, labelMenus, setLabelMenus }: ButtonLabelPr
                             <div>
                                 {keybinds.map((tag) => (
                                     <>
-                                        <div key={tag.name} className="text-sm">
+                                        <div key={tag.name} className={`text-sm ${keybinding.name}`}>
                                             {tag.label}
                                         </div>
 
