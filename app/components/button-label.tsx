@@ -4,7 +4,7 @@ import React, { useMemo } from "react";
 import { Card, CardContent } from "~/components/ui/card";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { Separator } from "~/components/ui/separator";
-import { keybinds } from "~/keybinds";
+import { keybinds, buttons } from "~/constants";
 
 import type { Object3D } from "three";
 import type { LabelMenu } from "~/components/joystick-model";
@@ -17,6 +17,7 @@ interface ButtonLabelProps {
 
 export function ButtonLabel({ object, labelMenus, setLabelMenus }: ButtonLabelProps) {
     const menu = useMemo(() => labelMenus.find((item) => item.id === object.uuid), [labelMenus]);
+    const button = useMemo(() => buttons.find((button) => button.name === object.userData.prop), [object]);
 
     return (
         <div className="annotation before:bg-slate-950">
@@ -37,7 +38,7 @@ export function ButtonLabel({ object, labelMenus, setLabelMenus }: ButtonLabelPr
                         )
                     }
                 >
-                    {object.userData.prop}
+                    {button && button.label}
                 </CardContent>
             </Card>
 

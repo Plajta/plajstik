@@ -40,3 +40,18 @@ export const keybinds = [
         label: "Select",
     },
 ];
+
+export const buttons = [
+    {
+        name: "btn1",
+        label: "Postraní tlačítko 1",
+    },
+    {
+        name: "btn2",
+        label: "Postraní tlačítko 2",
+    },
+    {
+        name: "btn3",
+        label: "Tlačítko joysticku",
+    },
+];
