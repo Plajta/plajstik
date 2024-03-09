@@ -1,8 +1,5 @@
 {
-    "label": "Default",
-    "keybindings": {
-        "btn1": "a",
-        "btn2": "x",
-        "btn3": "select"
-    }
+    "btn1": "a",
+    "btn2": "x",
+    "btn3": "select"
 }

@@ -23,10 +23,7 @@ export function ButtonLabel({ keymap, setKeymap, object, labelMenus, setLabelMen
     const menu = useMemo(() => labelMenus.find((item) => item.id === object.uuid), [labelMenus]);
     const button = useMemo(() => buttons.find((button) => button.name === object.userData.prop), [object]);
     const keybinding = useMemo(
-        () =>
-            keybinds.find(
-                (bind) => bind.name === keymap.keybindings.find((item) => item.name === button?.name)?.action,
-            ),
+        () => keybinds.find((bind) => bind.name === keymap.find((item) => item.name === button?.name)?.action),
         [keymap],
     );
 
@@ -68,16 +65,15 @@ export function ButtonLabel({ keymap, setKeymap, object, labelMenus, setLabelMen
                                             key={tag.name}
                                             className="text-sm flex gap-2 justify-between cursor-pointer"
                                             onClick={() =>
-                                                setKeymap((prev) => ({
-                                                    ...prev,
-                                                    keybindings: prev.keybindings.map((bind) => {
+                                                setKeymap((prev) =>
+                                                    prev.map((bind) => {
                                                         if (bind.name === button.name) {
                                                             bind.action = tag.name;
                                                         }
 
                                                         return bind;
                                                     }),
-                                                }))
+                                                )
                                             }
                                         >
                                             {tag.label}

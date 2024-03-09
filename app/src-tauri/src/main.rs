@@ -16,14 +16,8 @@ struct Keybinding {
     action: String,
 }
 
-#[derive(serde::Serialize, serde::Deserialize)]
-struct Keymap {
-    label: String,
-    keybindings: Vec<Keybinding>,
-}
-
 #[tauri::command(rename_all = "snake_case")]
-fn get_keymap() -> Keymap {
+fn get_keymap() -> Vec<Keybinding> {
     // todo: actually implementovat berani ze seriove sbernice
 
     let mut keybindings = Vec::new();
@@ -43,17 +37,16 @@ fn get_keymap() -> Keymap {
         action: "select".to_string()
     });
 
-    Keymap {
-        label: "Default".to_string(),
-        keybindings,
-    }
+    keybindings
 }
 
 #[tauri::command(rename_all = "snake_case")]
 fn save_keymap(keymap: String) -> bool {
-    let keymap: Keymap = serde_json::from_str(&keymap).unwrap();
+    let keybindings: Vec<Keybinding> = serde_json::from_str(&keymap).unwrap();
 
-    println!("{}", keymap.label);
+    for keybinding in keybindings {
+        println!("{}", keybinding.name);
+    }
 
     return true
 }
