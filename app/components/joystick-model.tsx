@@ -3,7 +3,7 @@
 import { useGLTF, Html } from "@react-three/drei";
 
 export function JoystickModel() {
-    const { scene } = useGLTF("/models/kostka.glb");
+    const { scene } = useGLTF("/models/joystick.glb");
 
     const annotations: React.ReactNode[] = [];
 
