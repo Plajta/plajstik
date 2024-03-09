@@ -43,7 +43,7 @@ export function ButtonLabel({ object, labelMenus, setLabelMenus }: ButtonLabelPr
             </Card>
 
             {menu && menu.opened && (
-                <Card className="shadow-none z-40 absolute left-36 bottom-[-150px] annotation-menu before:bg-slate-950">
+                <Card className="shadow-none z-40 absolute left-72 bottom-[-150px] annotation-menu before:bg-slate-950">
                     <CardContent className="select-none p-0">
                         <h4 className="text-sm font-medium leading-none p-2">Keybindy</h4>
 
