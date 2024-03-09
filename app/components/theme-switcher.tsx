@@ -11,7 +11,7 @@ export function ThemeSwitcher() {
 
     return (
         <Button
-            className="absolute top-1 right-1"
+            className="absolute top-1 right-1 z-50"
             variant="ghost"
             size="icon"
             onClick={() => setTheme(theme === "light" ? "dark" : "light")}
