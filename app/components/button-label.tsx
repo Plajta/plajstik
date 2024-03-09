@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo } from "react";
+import { CheckIcon } from "lucide-react";
 import { Card, CardContent } from "~/components/ui/card";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { Separator } from "~/components/ui/separator";
@@ -59,8 +60,12 @@ export function ButtonLabel({ keymap, object, labelMenus, setLabelMenus }: Butto
                             <div>
                                 {keybinds.map((tag) => (
                                     <>
-                                        <div key={tag.name} className={`text-sm ${keybinding.name}`}>
+                                        <div key={tag.name} className="text-sm flex gap-2 justify-between">
                                             {tag.label}
+
+                                            {keymap.keybindings[button.name] === tag.name && (
+                                                <CheckIcon className="h-5 w-5" />
+                                            )}
                                         </div>
 
                                         <Separator className="my-2" />
