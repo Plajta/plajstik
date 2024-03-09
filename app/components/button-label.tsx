@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { Object3D } from "three";
 import { Card, CardContent } from "~/components/ui/card";
 import { LabelMenu } from "~/components/joystick-model";
