@@ -1,16 +1,21 @@
 "use client";
 
-import * as THREE from "three";
-import { ThreeElements, useFrame } from "@react-three/fiber";
-import { useRef, useState } from "react";
+import { useGLTF, Html } from "@react-three/drei";
 
-export function JoystickModel(props: ThreeElements["mesh"]) {
-    const meshRef = useRef<THREE.Mesh>(null!);
+export function JoystickModel() {
+    const { scene } = useGLTF("/models/kostka.glb");
 
-    return (
-        <mesh {...props} ref={meshRef} scale={2}>
-            <boxGeometry args={[1, 1, 1]} />
-            <meshStandardMaterial color="orange" />
-        </mesh>
-    );
+    const annotations: React.ReactNode[] = [];
+
+    scene.traverse((o) => {
+        if (o.userData.prop) {
+            annotations.push(
+                <Html key={o.uuid} position={[o.position.x, o.position.y, o.position.z]} distanceFactor={0.25}>
+                    <div className="annotation">{o.userData.prop}</div>
+                </Html>,
+            );
+        }
+    });
+
+    return <primitive object={scene}>{annotations}</primitive>;
 }

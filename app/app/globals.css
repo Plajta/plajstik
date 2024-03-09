@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.annotation {
+    transform: translate3d(calc(55%), calc(-45%), 0);
+    text-align: left;
+    background: #181c20;
+    color: #8c92a4;
+    padding: 10px 15px;
+    border-radius: 5px;
+    user-select: none;
+}
+
+.annotation::before {
+    content: "";
+    position: absolute;
+    top: 30px;
+    left: -40px;
+    height: 2px;
+    width: 40px;
+    background: #181c20;
+}
