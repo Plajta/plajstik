@@ -4,6 +4,7 @@ import { JoystickModel } from "~/components/joystick-model";
 import { Canvas } from "~/components/canvas";
 import React, { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
+import { Button } from "~/components/ui/button";
 
 export interface Keymap {
     label: string;
@@ -27,7 +28,7 @@ export default function Home() {
     }, []);
 
     return (
-        <div className="h-[90vh] flex justify-center items-center">
+        <div className="h-[95vh] flex flex-col justify-center items-center">
             <Canvas>
                 {keymap && (
                     <JoystickModel
@@ -36,6 +37,8 @@ export default function Home() {
                     />
                 )}
             </Canvas>
+
+            <Button onClick={() => invoke("save_keymap", { keymap: JSON.stringify(keymap) })}>Uložit</Button>
         </div>
     );
 }

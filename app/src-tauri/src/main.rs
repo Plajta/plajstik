@@ -5,18 +5,18 @@ use serde;
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![get_keymap])
+        .invoke_handler(tauri::generate_handler![get_keymap, save_keymap])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
 
-#[derive(serde::Serialize)]
+#[derive(serde::Serialize, serde::Deserialize   )]
 struct Keybinding {
     name: String,
     action: String,
 }
 
-#[derive(serde::Serialize)]
+#[derive(serde::Serialize, serde::Deserialize)]
 struct Keymap {
     label: String,
     keybindings: Vec<Keybinding>,
@@ -47,4 +47,13 @@ fn get_keymap() -> Keymap {
         label: "Default".to_string(),
         keybindings,
     }
+}
+
+#[tauri::command(rename_all = "snake_case")]
+fn save_keymap(keymap: String) -> bool {
+    let keymap: Keymap = serde_json::from_str(&keymap).unwrap();
+
+    println!("{}", keymap.label);
+
+    return true
 }
