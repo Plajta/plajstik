@@ -91,6 +91,7 @@ int main(void)
   while (1)
   {
     tud_task(); // tinyusb device task
+    // tud_cdc_write_str("Test\n");
 
     hid_task();
   }
@@ -229,4 +230,15 @@ void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_
   (void) report_type;
   (void) buffer;
   (void) bufsize;
+}
+
+// Invoked when cdc when line state changed e.g connected/disconnected
+void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts) 
+{
+	(void)itf;
+	(void)rts;
+
+	if (dtr) {
+		tud_cdc_write_str("Connected\n");
+	}
 }
