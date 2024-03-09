@@ -82,6 +82,7 @@ int main(void)
 
   board_init();
   tusb_init();
+  stdio_init_all();
 
   adc_init();
   adc_gpio_init(26);
@@ -110,9 +111,9 @@ void tud_suspend_cb(bool remote_wakeup_en)
 uint32_t get_all_buttons(){
   uint32_t output = 0;
   for (int i = 0; i < sizeof(keys)/sizeof(keys[0]); i++){
-    output |= gpio_get(keys[i][0]) << keys[i][1];
+    output |= (!gpio_get(keys[i][0]) << keys[i][1]);
   }
-  return !output; // Negate because of pull ups on the pins
+  return output; // Negate because of pull ups on the pins
 }
 
 int get_dpad_dir(){
