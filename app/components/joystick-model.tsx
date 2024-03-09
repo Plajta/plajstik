@@ -22,7 +22,7 @@ export function JoystickModel() {
                     <div className="annotation">
                         <Dialog>
                             <DialogTrigger>{o.userData.prop}</DialogTrigger>
-                            <DialogContent>
+                            <DialogContent className="z-[9999999999]">
                                 <DialogHeader>
                                     <DialogTitle>Are you absolutely sure?</DialogTitle>
                                     <DialogDescription>
