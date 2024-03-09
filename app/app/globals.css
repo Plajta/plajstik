@@ -4,13 +4,6 @@
 
 .annotation {
     transform: translate3d(calc(55%), calc(-45%), 0);
-    text-align: left;
-    background: #181c20;
-    color: #8c92a4;
-    padding: 5px 10px;
-    border-radius: 5px;
-    user-select: none;
-    font-size: 10px;
 }
 
 .annotation::before {

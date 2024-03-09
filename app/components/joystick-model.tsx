@@ -1,6 +1,7 @@
 "use client";
 
 import { useGLTF, Html } from "@react-three/drei";
+import { ButtonLabel } from "~/components/button-label";
 
 export function JoystickModel() {
     const { scene } = useGLTF("/models/joystick.glb");
@@ -11,7 +12,7 @@ export function JoystickModel() {
         if (o.userData.prop) {
             annotations.push(
                 <Html key={o.uuid} position={[o.position.x, o.position.y, o.position.z]} distanceFactor={0.25}>
-                    <div className="annotation">{o.userData.prop}</div>
+                    <ButtonLabel object={o} />
                 </Html>,
             );
         }
