@@ -58,6 +58,10 @@ BUTTON_L3              13
 BUTTON_R3              14
 */
 
+#define BUF_SIZE 1024
+char buf[BUF_SIZE];
+int counter = 0;
+
 int keys[][2] = {{5, 13}, {4, 0}, {3, 1}, {0, 10}, {1, 11}}; // Pin, bit shift
 int dpad[] = {6, 7, 8, 9}; // Up, right, down, left
 
@@ -192,16 +196,23 @@ void hid_task(void)
 }
 
 void cdc_task(void){
-  if (tud_cdc_connected()){
-    // connected and there are data available
-    if (tud_cdc_available()) {
-      char buf[64];
-      uint32_t count = tud_cdc_read(buf, sizeof(buf));
-      (void) count;
+  if (tud_cdc_available()) {
+    int count = tud_cdc_read(&buf[counter], 1); //buf+(counter*8)
 
-      tud_cdc_write(buf, count);
+    if (buf[counter] == 0x04){
+      tud_cdc_write("Bals", 4);
       tud_cdc_write_flush();
-      tud_cdc_read_flush();
+      buf[0] = '\0';
+      counter = 0;
+    }
+
+    counter += count;
+
+    tud_cdc_write(buf, counter);
+    tud_cdc_write_flush();
+
+    if (counter + 1 >= BUF_SIZE){
+      *((volatile uint32_t*)(PPB_BASE + 0x0ED0C)) = 0x5FA0004; // Reset itself, i don't want to handle it
     }
   }
 }
@@ -256,5 +267,7 @@ void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts)
 
 	if (dtr) {
 		tud_cdc_write_str("Connected\n");
+    tud_cdc_write_flush();
+    counter = 0;
 	}
 }
