@@ -7,17 +7,18 @@
     text-align: left;
     background: #181c20;
     color: #8c92a4;
-    padding: 10px 15px;
+    padding: 5px 10px;
     border-radius: 5px;
     user-select: none;
+    font-size: 10px;
 }
 
 .annotation::before {
     content: "";
     position: absolute;
     top: 30px;
-    left: -40px;
+    left: -30px;
     height: 2px;
-    width: 40px;
+    width: 30px;
     background: #181c20;
 }
