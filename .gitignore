@@ -15,3 +15,5 @@ _deps
 .idea/
 
 firmware/build/
+
+.DS_Store
