@@ -3,16 +3,16 @@
 @tailwind utilities;
 
 .annotation {
-    transform: translate3d(calc(55%), calc(-45%), 0);
+    transform: translate3d(calc(30%), calc(-45%), 0);
 }
 
 .annotation::before {
     content: "";
     position: absolute;
     top: 30px;
-    left: -30px;
+    left: -60px;
     height: 2px;
-    width: 30px;
+    width: 60px;
 }
 
 .annotation-menu::before {
