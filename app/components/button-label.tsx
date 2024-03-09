@@ -13,16 +13,20 @@ import type { Keymap } from "~/app/page";
 
 interface ButtonLabelProps {
     keymap: Keymap;
+    setKeymap: React.Dispatch<React.SetStateAction<Keymap>>;
     object: Object3D;
     labelMenus: LabelMenu[];
     setLabelMenus: React.Dispatch<React.SetStateAction<LabelMenu[]>>;
 }
 
-export function ButtonLabel({ keymap, object, labelMenus, setLabelMenus }: ButtonLabelProps) {
+export function ButtonLabel({ keymap, setKeymap, object, labelMenus, setLabelMenus }: ButtonLabelProps) {
     const menu = useMemo(() => labelMenus.find((item) => item.id === object.uuid), [labelMenus]);
     const button = useMemo(() => buttons.find((button) => button.name === object.userData.prop), [object]);
     const keybinding = useMemo(
-        () => keybinds.find((keybinding) => keybinding.name === keymap.keybindings[button?.name]),
+        () =>
+            keybinds.find(
+                (bind) => bind.name === keymap.keybindings.find((item) => item.name === button?.name)?.action,
+            ),
         [keymap],
     );
 
@@ -60,12 +64,25 @@ export function ButtonLabel({ keymap, object, labelMenus, setLabelMenus }: Butto
                             <div>
                                 {keybinds.map((tag) => (
                                     <>
-                                        <div key={tag.name} className="text-sm flex gap-2 justify-between">
+                                        <div
+                                            key={tag.name}
+                                            className="text-sm flex gap-2 justify-between"
+                                            onClick={() =>
+                                                setKeymap((prev) => ({
+                                                    ...prev,
+                                                    keybindings: prev.keybindings.map((bind) => {
+                                                        if (bind.name === button.name) {
+                                                            bind.action = tag.name;
+                                                        }
+
+                                                        return bind;
+                                                    }),
+                                                }))
+                                            }
+                                        >
                                             {tag.label}
 
-                                            {keymap.keybindings[button.name] === tag.name && (
-                                                <CheckIcon className="h-5 w-5" />
-                                            )}
+                                            {tag.name === keybinding.name && <CheckIcon className="h-5 w-5" />}
                                         </div>
 
                                         <Separator className="my-2" />

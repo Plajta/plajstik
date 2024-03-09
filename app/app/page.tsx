@@ -2,12 +2,15 @@
 
 import { JoystickModel } from "~/components/joystick-model";
 import { Canvas } from "~/components/canvas";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 
 export interface Keymap {
     label: string;
-    keybindings: Record<string, string>;
+    keybindings: {
+        name: string;
+        action: string;
+    }[];
 }
 
 export default function Home() {
@@ -25,7 +28,14 @@ export default function Home() {
 
     return (
         <div className="h-[90vh] flex justify-center items-center">
-            <Canvas>{keymap && <JoystickModel keymap={keymap} />}</Canvas>
+            <Canvas>
+                {keymap && (
+                    <JoystickModel
+                        keymap={keymap}
+                        setKeymap={setKeymap as React.Dispatch<React.SetStateAction<Keymap>>}
+                    />
+                )}
+            </Canvas>
         </div>
     );
 }

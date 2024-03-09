@@ -1,7 +1,6 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::collections::HashMap;
 use serde;
 
 fn main() {
@@ -12,20 +11,37 @@ fn main() {
 }
 
 #[derive(serde::Serialize)]
+struct Keybinding {
+    name: String,
+    action: String,
+}
+
+#[derive(serde::Serialize)]
 struct Keymap {
     label: String,
-    keybindings: HashMap<String, String>,
+    keybindings: Vec<Keybinding>,
 }
 
 #[tauri::command(rename_all = "snake_case")]
 fn get_keymap() -> Keymap {
     // todo: actually implementovat berani ze seriove sbernice
 
-    let mut keybindings = HashMap::new();
+    let mut keybindings = Vec::new();
 
-    keybindings.insert("btn1".to_string(), "x".to_string());
-    keybindings.insert("btn2".to_string(), "y".to_string());
-    keybindings.insert("btn3".to_string(), "select".to_string());
+    keybindings.push(Keybinding {
+        name: "btn1".to_string(),
+        action: "a".to_string()
+    });
+
+    keybindings.push(Keybinding {
+        name: "btn2".to_string(),
+        action: "x".to_string()
+    });
+
+    keybindings.push(Keybinding {
+        name: "btn3".to_string(),
+        action: "select".to_string()
+    });
 
     Keymap {
         label: "Default".to_string(),
