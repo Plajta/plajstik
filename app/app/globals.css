@@ -13,5 +13,14 @@
     left: -30px;
     height: 2px;
     width: 30px;
-    background: #181c20;
+}
+
+.annotation-menu::before {
+    content: "";
+    position: absolute;
+    top: 50px;
+    left: -58px;
+    transform: rotate(150deg);
+    height: 2px;
+    width: 64px;
 }
