@@ -21,7 +21,7 @@ export function ButtonLabel({ object, labelMenus, setLabelMenus }: ButtonLabelPr
 
     return (
         <div className="annotation before:bg-slate-950">
-            <Card className="shadow-none">
+            <Card className="shadow-none w-52 text-center">
                 <CardContent
                     className="select-none p-2"
                     onClick={() =>
