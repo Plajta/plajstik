@@ -62,8 +62,48 @@ BUTTON_R3              14
 char buf[BUF_SIZE];
 int counter = 0;
 
-int keys[][2] = {{5, 13}, {4, 0}, {3, 1}, {0, 10}, {1, 11}}; // Pin, bit shift
-int dpad[] = {6, 7, 8, 9}; // Up, right, down, left
+const int pins[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+int keymap[15] = {-1};
+int dpad[4] = {-1}; // Up, right, down, left
+
+int get_pin(char const* input) {
+  if (!strcmp(input, "btn0")) return 0; // These will get real names, that's why i used this
+  if (!strcmp(input, "btn1")) return 1;
+  if (!strcmp(input, "btn2")) return 2;
+  if (!strcmp(input, "btn3")) return 3;
+  if (!strcmp(input, "btn4")) return 4;
+  if (!strcmp(input, "btn5")) return 5;
+  if (!strcmp(input, "btn6")) return 6;
+  if (!strcmp(input, "btn7")) return 7;
+  if (!strcmp(input, "btn8")) return 8;
+  if (!strcmp(input, "btn9")) return 9;
+  return -1;
+};
+
+int find_mapping(char const* input) {
+  if (!strcmp(input, "a")) return 0; // WILL DO BETTER
+  if (!strcmp(input, "b")) return 1;
+  if (!strcmp(input, "x")) return 3;
+  if (!strcmp(input, "y")) return 4;
+  if (!strcmp(input, "l1")) return 6;
+  if (!strcmp(input, "r1")) return 7;
+  if (!strcmp(input, "l2")) return 8;
+  if (!strcmp(input, "r2")) return 9;
+  if (!strcmp(input, "select")) return 10;
+  if (!strcmp(input, "start")) return 11;
+  if (!strcmp(input, "home")) return 12;
+  if (!strcmp(input, "l3")) return 13;
+  if (!strcmp(input, "r3")) return 14;
+  return -1;
+};
+
+int find_dpad(char const* input) {
+  if (!strcmp(input, "dpad_u")) return 0;
+  if (!strcmp(input, "dpad_r")) return 1;
+  if (!strcmp(input, "dpad_d")) return 2;
+  if (!strcmp(input, "dpad_l")) return 3;
+  return -1;
+};
 
 //--------------------------------------------------------------------+
 // MACRO CONSTANT TYPEDEF PROTYPES
@@ -75,16 +115,10 @@ void cdc_task(void);
 /*------------- MAIN -------------*/
 int main(void)
 {
-  for (int i = 0; i < sizeof(keys)/sizeof(keys[0]); i++){
-    gpio_init(keys[i][0]);
-    gpio_set_dir(keys[i][0], GPIO_IN);
-    gpio_pull_up(keys[i][0]);
-  }
-
-  for (int i = 0; i < 4; i++){
-    gpio_init(dpad[i]);
-    gpio_set_dir(dpad[i], GPIO_IN);
-    gpio_pull_up(dpad[i]);
+  for (int i = 0; i < sizeof(pins)/sizeof(pins[0]); i++){
+    gpio_init(pins[i]);
+    gpio_set_dir(pins[i], GPIO_IN);
+    gpio_pull_up(pins[i]);
   }
 
   board_init();
@@ -116,17 +150,21 @@ void tud_suspend_cb(bool remote_wakeup_en)
 
 uint32_t get_all_buttons(){
   uint32_t output = 0;
-  for (int i = 0; i < sizeof(keys)/sizeof(keys[0]); i++){
-    output |= (!gpio_get(keys[i][0]) << keys[i][1]);
+  for (int i = 0; i < sizeof(keymap)/sizeof(keymap[0]); i++){
+    if (keymap[i] > -1) {
+      output |= (!gpio_get(keymap[i]) << i); // Negate because of pull ups on the pins
+    }
   }
-  return output; // Negate because of pull ups on the pins
+  return output;
 }
 
 int get_dpad_dir(){
-  int output[4]; // Up, right, down, left
+  int output[4] = {0}; // Up, right, down, left
 
   for (int i = 0; i < 4; i++){
-    output[i] = !gpio_get(dpad[i]); // Invert because of pull-up
+    if (dpad[i] > -1){
+      output[i] = !gpio_get(dpad[i]); // Invert because of pull-up
+    }
   }
 
   // Diagonal directions
@@ -195,21 +233,50 @@ void hid_task(void)
   }
 }
 
+void setup_from_json(char* buf){
+  json_t mem[32];
+  json_t const* json = json_create(buf, mem, sizeof mem / sizeof *mem );
+  if ( !json ) {
+    tud_cdc_write("Invalid JSON!", 13);
+    tud_cdc_write_flush();
+  }
+  else{
+    json_t const* child;
+    for(child = json_getChild( json ); child != 0; child = json_getSibling( child )) {
+      int pin = get_pin(json_getName(child));
+      int key = find_mapping(json_getValue(child));
+      char balls[6];
+      if (key > -1){
+        keymap[key] = pin;
+        sprintf(balls, "%i,%i\n", key, pin);
+      }
+      else {
+        int key = find_dpad(json_getValue(child));
+        if (key > -1){
+          dpad[key] = pin;
+          sprintf(balls, "D%i,%i\n", key, pin);
+        }
+      }
+      tud_cdc_write(balls, 6);
+      tud_cdc_write_flush();
+    }
+  }
+}
+
 void cdc_task(void){
   if (tud_cdc_available()) {
-    int count = tud_cdc_read(&buf[counter], 1); //buf+(counter*8)
+    int count = tud_cdc_read(&buf[counter], 1);
 
     if (buf[counter] == 0x04){
-      tud_cdc_write("Bals", 4);
+      setup_from_json(buf);
+      tud_cdc_write(buf, sizeof(buf));
       tud_cdc_write_flush();
       buf[0] = '\0';
       counter = 0;
+      tud_cdc_read_flush();
     }
 
     counter += count;
-
-    tud_cdc_write(buf, counter);
-    tud_cdc_write_flush();
 
     if (counter + 1 >= BUF_SIZE){
       *((volatile uint32_t*)(PPB_BASE + 0x0ED0C)) = 0x5FA0004; // Reset itself, i don't want to handle it
