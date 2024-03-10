@@ -37,6 +37,36 @@ fn get_keymap() -> Vec<Keybinding> {
         action: "select".to_string()
     });
 
+    keybindings.push(Keybinding {
+        name: "btn4".to_string(),
+        action: "b".to_string()
+    });
+
+    keybindings.push(Keybinding {
+        name: "btn5".to_string(),
+        action: "a".to_string()
+    });
+
+    keybindings.push(Keybinding {
+        name: "btn6".to_string(),
+        action: "x".to_string()
+    });
+
+    keybindings.push(Keybinding {
+        name: "btn7".to_string(),
+        action: "y".to_string()
+    });
+
+    keybindings.push(Keybinding {
+        name: "btn8".to_string(),
+        action: "start".to_string()
+    });
+
+    keybindings.push(Keybinding {
+        name: "dpad".to_string(),
+        action: "start".to_string()
+    });
+
     keybindings
 }
 
