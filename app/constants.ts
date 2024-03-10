@@ -64,4 +64,19 @@ export const buttons = [
         label: "Macro tlačítko 2",
         position: "top",
     },
+    {
+        name: "btn6",
+        label: "Macro tlačítko 3",
+        position: "left",
+    },
+    {
+        name: "btn7",
+        label: "Macro tlačítko 4",
+        position: "right",
+    },
+    {
+        name: "btn8",
+        label: "Macro tlačítko 5",
+        position: "right",
+    },
 ];
