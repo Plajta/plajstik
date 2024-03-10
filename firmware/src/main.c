@@ -196,9 +196,9 @@ static void send_hid_report(uint32_t btn)
     .hat = 0, .buttons = 0
   };
 
-    adc_select_input(0);
-    report.x = (adc_read() >> 4) - 128;
     adc_select_input(1);
+    report.x = -(adc_read() >> 4) + 128;
+    adc_select_input(0);
     report.y = (adc_read() >> 4) - 128;
     report.hat = get_dpad_dir();
     report.buttons = btn;
@@ -245,20 +245,11 @@ void setup_from_json(char* buf){
     for(child = json_getChild( json ); child != 0; child = json_getSibling( child )) {
       int pin = get_pin(json_getName(child));
       int key = find_mapping(json_getValue(child));
-      char balls[6];
-      if (key > -1){
-        keymap[key] = pin;
-        sprintf(balls, "%i,%i\n", key, pin);
-      }
+      if (key > -1) keymap[key] = pin;
       else {
         int key = find_dpad(json_getValue(child));
-        if (key > -1){
-          dpad[key] = pin;
-          sprintf(balls, "D%i,%i\n", key, pin);
-        }
+        if (key > -1) dpad[key] = pin;
       }
-      tud_cdc_write(balls, 6);
-      tud_cdc_write_flush();
     }
   }
 }
@@ -269,14 +260,17 @@ void cdc_task(void){
 
     if (buf[counter] == 0x04){
       setup_from_json(buf);
-      tud_cdc_write(buf, sizeof(buf));
+      char balls[6];
+      sprintf(balls, "%i", strlen(buf));
+      tud_cdc_write(balls, 6);
       tud_cdc_write_flush();
-      buf[0] = '\0';
+      memset(buf, 0, sizeof(buf));
       counter = 0;
-      tud_cdc_read_flush();
+      // tud_cdc_read_flush();
     }
-
-    counter += count;
+    else{
+      counter += count;
+    }
 
     if (counter + 1 >= BUF_SIZE){
       *((volatile uint32_t*)(PPB_BASE + 0x0ED0C)) = 0x5FA0004; // Reset itself, i don't want to handle it
