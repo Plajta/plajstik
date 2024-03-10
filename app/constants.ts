@@ -79,4 +79,9 @@ export const buttons = [
         label: "Macro tlačítko 5",
         position: "right",
     },
+    {
+        name: "dpad",
+        label: "D-Pad",
+        position: "right",
+    },
 ];
