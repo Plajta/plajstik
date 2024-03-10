@@ -12,6 +12,19 @@
     left: -350px;
 }
 
+.annotation-top {
+    transform: translate3d(calc(30%), calc(-45%), 0);
+    position: absolute;
+    left: -160px;
+    top: -100px
+}
+
+.annotation-bottom {
+    transform: translate3d(calc(30%), calc(-45%), 0);
+    position: absolute;
+    left: -350px;
+}
+
 .annotation-right::before {
     content: "";
     position: absolute;
@@ -22,6 +35,25 @@
 }
 
 .annotation-left::before {
+    content: "";
+    position: absolute;
+    top: 20px;
+    left: 208px;
+    height: 2px;
+    width: 75px;
+}
+
+.annotation-top::before {
+    content: "";
+    transform: rotate(90deg);
+    position: absolute;
+    top: 78px;
+    left: 60px;
+    height: 2px;
+    width: 75px;
+}
+
+.annotation-bottom::before {
     content: "";
     position: absolute;
     top: 20px;
