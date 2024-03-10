@@ -37,7 +37,7 @@ export default function Home() {
                 )}
             </Canvas>
 
-            <Button onClick={() => invoke("save_keymap", { keymap: JSON.stringify(keymap) })}>Uložit</Button>
+            <Button onClick={() => invoke("save_keymap", { keymap: JSON.stringify(keymap) })}>Nahrát Keymapu</Button>
         </div>
     );
 }
