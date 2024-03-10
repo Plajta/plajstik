@@ -54,4 +54,9 @@ export const buttons = [
         name: "btn3",
         label: "Tlačítko joysticku",
     },
+    {
+        name: "btn4",
+        label: "Macro tlačítko 1",
+        position: "left",
+    },
 ];

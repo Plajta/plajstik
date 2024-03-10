@@ -28,7 +28,9 @@ export function ButtonLabel({ keymap, setKeymap, object, labelMenus, setLabelMen
     );
 
     return (
-        <div className="annotation before:bg-slate-950">
+        <div
+            className={`${button?.position ? `annotation-${button?.position}` : "annotation-right"} before:bg-slate-950`}
+        >
             <Card className="shadow-none w-52 text-center">
                 <CardContent
                     className="select-none p-2"

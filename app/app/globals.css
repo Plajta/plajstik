@@ -2,17 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
-.annotation {
+.annotation-right {
     transform: translate3d(calc(30%), calc(-45%), 0);
 }
 
-.annotation::before {
+.annotation-left {
+    transform: translate3d(calc(30%), calc(-45%), 0);
+    position: absolute;
+    left: -350px;
+}
+
+.annotation-right::before {
     content: "";
     position: absolute;
     top: 30px;
     left: -60px;
     height: 2px;
     width: 60px;
+}
+
+.annotation-left::before {
+    content: "";
+    position: absolute;
+    top: 20px;
+    left: 208px;
+    height: 2px;
+    width: 75px;
 }
 
 .annotation-menu::before {
