@@ -62,7 +62,19 @@
     width: 75px;
 }
 
-.annotation-menu::before {
+.annotation-menu-left {
+    position: absolute;
+    left: 5px;
+    bottom: 150px;
+}
+
+.annotation-menu-right {
+    position: absolute;
+    left: 290px;
+    bottom: -150px;
+}
+
+.annotation-menu-right::before {
     content: "";
     position: absolute;
     top: 85px;
@@ -70,4 +82,14 @@
     transform: rotate(133deg);
     height: 2px;
     width: 123px;
+}
+
+.annotation-menu-left::before {
+    content: "";
+    position: absolute;
+    top: 373px;
+    left: 30px;
+    transform: rotate(90deg);
+    height: 2px;
+    width: 108px;
 }

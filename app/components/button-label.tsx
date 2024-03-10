@@ -53,7 +53,9 @@ export function ButtonLabel({ keymap, setKeymap, object, labelMenus, setLabelMen
             </Card>
 
             {menu && button && keybinding && menu.opened && (
-                <Card className="shadow-none z-40 absolute left-72 bottom-[-150px] annotation-menu before:bg-slate-950">
+                <Card
+                    className={`shadow-none z-40 ${button.position === "right" ? `annotation-menu-right` : "annotation-menu-left"} before:bg-slate-950`}
+                >
                     <CardContent className="select-none p-0">
                         <h4 className="text-sm font-medium leading-none p-2">Keybindy</h4>
 

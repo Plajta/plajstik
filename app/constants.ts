@@ -45,14 +45,17 @@ export const buttons = [
     {
         name: "btn1",
         label: "Postraní tlačítko 1",
+        position: "right",
     },
     {
         name: "btn2",
         label: "Postraní tlačítko 2",
+        position: "right",
     },
     {
         name: "btn3",
         label: "Tlačítko joysticku",
+        position: "right",
     },
     {
         name: "btn4",
