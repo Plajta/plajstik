@@ -62,6 +62,18 @@ BUTTON_R3              14
 char buf[BUF_SIZE];
 int counter = 0;
 
+char default_json[] = "{ \
+    \"btn6\": \"dpad_u\", \
+    \"btn7\": \"dpad_r\", \
+    \"btn8\": \"dpad_d\", \
+    \"btn9\": \"dpad_l\", \
+    \"btn5\": \"l3\", \
+    \"btn4\": \"a\", \
+    \"btn3\": \"b\", \
+    \"btn0\": \"select\", \
+    \"btn1\": \"start\" \
+}";
+
 const int pins[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 int keymap[15] = {-1};
 int dpad[4] = {-1}; // Up, right, down, left
@@ -111,6 +123,7 @@ int find_dpad(char const* input) {
 
 void hid_task(void);
 void cdc_task(void);
+int setup_from_json(char* buf);
 
 /*------------- MAIN -------------*/
 int main(void)
@@ -128,6 +141,11 @@ int main(void)
   adc_init();
   adc_gpio_init(26);
   adc_gpio_init(27);
+
+  if (setup_from_json(buf) != 0) {
+    tud_cdc_write("Invalid JSON!", 13);
+    tud_cdc_write_flush();
+  }
 
   while (1){
     tud_task();
@@ -181,6 +199,7 @@ int get_dpad_dir(){
 
   return 0; // No direction pressed
 }
+
 //--------------------------------------------------------------------+
 // USB HID
 //--------------------------------------------------------------------+
@@ -196,13 +215,13 @@ static void send_hid_report(uint32_t btn)
     .hat = 0, .buttons = 0
   };
 
-    adc_select_input(1);
-    report.x = -(adc_read() >> 4) + 128;
-    adc_select_input(0);
-    report.y = (adc_read() >> 4) - 128;
-    report.hat = get_dpad_dir();
-    report.buttons = btn;
-    tud_hid_report(REPORT_ID_GAMEPAD, &report, sizeof(report));
+  adc_select_input(1);
+  report.x = -(adc_read() >> 4) + 128; // TODO: Add a deadzone
+  adc_select_input(0);
+  report.y = (adc_read() >> 4) - 128;
+  report.hat = get_dpad_dir();
+  report.buttons = btn;
+  tud_hid_report(REPORT_ID_GAMEPAD, &report, sizeof(report));
 }
 
 
@@ -233,12 +252,12 @@ void hid_task(void)
   }
 }
 
-void setup_from_json(char* buf){
-  json_t mem[32];
+// Parse JSON from string and map keys to pins
+int setup_from_json(char* buf){
+  json_t mem[32]; // This buffer size should be enough because the RP2040 only has 30 IO pins
   json_t const* json = json_create(buf, mem, sizeof mem / sizeof *mem );
   if ( !json ) {
-    tud_cdc_write("Invalid JSON!", 13);
-    tud_cdc_write_flush();
+    return 1;
   }
   else{
     json_t const* child;
@@ -251,32 +270,34 @@ void setup_from_json(char* buf){
         if (key > -1) dpad[key] = pin;
       }
     }
+    return 0;
   }
 }
 
 void cdc_task(void){
   if (tud_cdc_available()) {
-    int count = tud_cdc_read(&buf[counter], 1);
+    int count = tud_cdc_read(&buf[counter], 1); // TODO: Test bigger read sizes
 
     if (buf[counter] == 0x04){
-      setup_from_json(buf);
-      char balls[6];
-      sprintf(balls, "%i", strlen(buf));
-      tud_cdc_write(balls, 6);
-      tud_cdc_write_flush();
+      if (setup_from_json(buf) != 0) {
+        tud_cdc_write("Invalid JSON!", 13);
+        tud_cdc_write_flush();
+      }
       memset(buf, 0, sizeof(buf));
       counter = 0;
-      // tud_cdc_read_flush();
+      // tud_cdc_read_flush(); // TODO: test this
     }
     else{
-      counter += count;
+      counter += count; // TODO: Test bigger read sizes
     }
 
     if (counter + 1 >= BUF_SIZE){
-      *((volatile uint32_t*)(PPB_BASE + 0x0ED0C)) = 0x5FA0004; // Reset itself, i don't want to handle it
+      *((volatile uint32_t*)(PPB_BASE + 0x0ED0C)) = 0x5FA0004; // Reset itself, don't know how to handle it
     }
   }
 }
+
+// TODO Test this and clean it
 
 // Invoked when sent REPORT successfully to host
 // Application can use this to send the next report
@@ -294,12 +315,12 @@ void cdc_task(void){
 //   }
 // }
 
+// This is needed even tho it doesn't do anything due to callbacks
 // Invoked when received GET_REPORT control request
 // Application must fill buffer report's content and return its length.
 // Return zero will cause the stack to STALL request
 uint16_t tud_hid_get_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t* buffer, uint16_t reqlen)
 {
-  // TODO not Implemented
   (void) instance;
   (void) report_id;
   (void) report_type;
@@ -309,6 +330,7 @@ uint16_t tud_hid_get_report_cb(uint8_t instance, uint8_t report_id, hid_report_t
   return 0;
 }
 
+// This is needed even tho it doesn't do anything due to callbacks
 // Invoked when received SET_REPORT control request or
 // received data on OUT endpoint ( Report ID = 0, Type = 0 )
 void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t const* buffer, uint16_t bufsize)
@@ -324,7 +346,7 @@ void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_
 void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts) 
 {
 	(void)itf;
-	(void)rts;
+	(void)rts; // TODO: Try resetting
 
 	if (dtr) {
 		tud_cdc_write_str("Connected\n");
