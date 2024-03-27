@@ -20,3 +20,6 @@ And you'll end up with a `.uf2` file inside the build directory.
 # Flashing
 Hold down the `BOOT` button of your RP2040 board and then connect it to USB or just reset it.
 It will now appear as a mass storage device on your computer, then just copy the `.uf2` to that device, the board will automatically restart to it.
+
+# Thanks
+Thanks to [tiny-json](https://github.com/rafagafe/tiny-json) for making this a lot easier.
