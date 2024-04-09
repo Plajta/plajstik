@@ -13,6 +13,8 @@ target_sources(${PROJECT_NAME} PRIVATE
   src/tusb_config.h
   include/tiny-json.c
   include/tiny-json.h
+  include/stringmap.c
+  include/stringmap.h
 )
 
 pico_enable_stdio_usb(${PROJECT_NAME} 1)
