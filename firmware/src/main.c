@@ -28,6 +28,8 @@
 #include <stdio.h>
 #include <string.h>
 #include "hardware/adc.h"
+#include "hardware/flash.h"
+#include "hardware/sync.h"
 
 #include "bsp/board.h"
 #include "tusb.h"
@@ -36,6 +38,13 @@
 
 #include "../include/tiny-json.h"
 #include "../include/stringmap.h"
+#include "../include/utils.h"
+
+extern uint32_t ADDR_PERSISTENT[];
+#define PERSISTENT_BASE_ADDR (uint32_t)(ADDR_PERSISTENT)
+#define PERSISTENT_TARGET_ADDR (PERSISTENT_BASE_ADDR-XIP_BASE)
+
+#define BUF_SIZE FLASH_PAGE_SIZE*4
 
 #define TU_BIT(n)              (1UL << (n))
 
@@ -59,8 +68,8 @@ BUTTON_L3              13
 BUTTON_R3              14
 */
 
-#define BUF_SIZE 1024
 char buf[BUF_SIZE];
+char *persistent_json = (char *)PERSISTENT_BASE_ADDR;
 int counter = 0;
 
 char default_json[] = "{ \
@@ -74,6 +83,8 @@ char default_json[] = "{ \
     \"btn0\": \"select\", \
     \"btn1\": \"start\" \
 }";
+
+static_assert(sizeof(default_json) / sizeof(default_json[0]) < BUF_SIZE, "BUF_SIZE mismatch!"); // Ensure that default_json never is more than 1024 otherwise risk flash damage from constant rewriting
 
 const int pins[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 int keymap[15] = {-1};
@@ -90,6 +101,20 @@ int setup_from_json(char* buf);
 /*------------- MAIN -------------*/
 int main(void)
 {
+  const uint LED_PIN = PICO_DEFAULT_LED_PIN;
+  gpio_init(LED_PIN);
+  gpio_set_dir(LED_PIN, GPIO_OUT);
+
+  if (strlen_s(persistent_json, BUF_SIZE) == BUF_SIZE){ // If persistent_json is not valid, replace it with default_json
+    char page_aligned[BUF_SIZE]; // One page size is 256 bytes, we want 1k
+    memset(page_aligned, 0xFF, BUF_SIZE);
+    strcpy(page_aligned, default_json);
+    uint32_t ints = save_and_disable_interrupts();
+    flash_range_erase(PERSISTENT_TARGET_ADDR, FLASH_SECTOR_SIZE); // Probably not needed but left it here just to be sure
+    flash_range_program(PERSISTENT_TARGET_ADDR, page_aligned, BUF_SIZE);
+    restore_interrupts(ints);
+  }
+
   for (int i = 0; i < sizeof(pins)/sizeof(pins[0]); i++){
     gpio_init(pins[i]);
     gpio_set_dir(pins[i], GPIO_IN);
@@ -104,7 +129,9 @@ int main(void)
   adc_gpio_init(26);
   adc_gpio_init(27);
 
-  if (setup_from_json(default_json) != 0) {
+  gpio_put(LED_PIN, 1);
+
+  if (setup_from_json(persistent_json) != 0) {
     tud_cdc_write("Invalid JSON!", 13);
     tud_cdc_write_flush();
   }
@@ -245,6 +272,9 @@ void cdc_task(void){
         tud_cdc_write("Invalid JSON!", 13);
         tud_cdc_write_flush();
       }
+      else{
+        //TODO: Only save to persistent storage after checking if the JSON is valid
+      }
       memset(buf, 0, sizeof(buf));
       counter = 0;
       // tud_cdc_read_flush(); // TODO: test this
@@ -311,8 +341,11 @@ void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts)
 	(void)rts; // TODO: Try resetting
 
 	if (dtr) {
-		tud_cdc_write_str("Connected\n");
-    tud_cdc_write_flush();
-    counter = 0;
+      char send_buf[80];
+      sprintf(send_buf, "%.10s, Address:%x\n", persistent_json, PERSISTENT_BASE_ADDR);
+      tud_cdc_write_str("Connected\n");
+      tud_cdc_write_str(send_buf);
+      tud_cdc_write_flush();
+      counter = 0;
 	}
 }
