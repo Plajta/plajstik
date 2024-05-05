@@ -73,17 +73,8 @@ char *persistent_json = (char *)PERSISTENT_BASE_ADDR;
 char runtime_json[BUF_SIZE];
 int counter = 0;
 
-char default_json[] = "{ \
-    \"btn6\": \"dpad_u\", \
-    \"btn7\": \"dpad_r\", \
-    \"btn8\": \"dpad_d\", \
-    \"btn9\": \"dpad_l\", \
-    \"btn5\": \"l3\", \
-    \"btn4\": \"a\", \
-    \"btn3\": \"b\", \
-    \"btn0\": \"select\", \
-    \"btn1\": \"start\" \
-}";
+char default_json[] = "{\"btn6\": \"dpad_u\", \"btn7\": \"dpad_r\", \"btn8\": \"dpad_d\", \"btn9\": \"dpad_l\", \
+\"btn5\": \"l3\", \"btn4\": \"a\", \"btn3\": \"b\", \"btn0\": \"select\", \"btn1\": \"start\"}";
 
 static_assert(sizeof(default_json) / sizeof(default_json[0]) < BUF_SIZE, "BUF_SIZE mismatch!"); // Ensure that default_json never is more than 1024 otherwise risk flash damage from constant rewriting
 
@@ -109,16 +100,11 @@ int main(void)
   memcpy(runtime_json, persistent_json, BUF_SIZE);
   runtime_json[BUF_SIZE-1] = '\0';
 
-  if (setup_from_json(runtime_json) != 0){ // If persistent_json is not valid, replace it with default_json
-    char page_aligned[BUF_SIZE]; // One page size is 256 bytes, we want 1k
-    memset(page_aligned, '\0', BUF_SIZE);
-    strcpy(page_aligned, default_json);
-    uint32_t ints = save_and_disable_interrupts();
-    flash_range_erase(PERSISTENT_TARGET_ADDR, FLASH_SECTOR_SIZE); // Probably not needed but left it here just to be sure
-    flash_range_program(PERSISTENT_TARGET_ADDR, page_aligned, BUF_SIZE);
-    restore_interrupts(ints);
+  if (setup_from_json(runtime_json) != 0){ // If json in flash is not valid, replace it with default_json
+    save_string(PERSISTENT_TARGET_ADDR, default_json, BUF_SIZE);
     gpio_put(LED_PIN, 1);
-    while (1);
+    sleep_ms(2000);
+    *((volatile uint32_t*)(PPB_BASE + 0x0ED0C)) = 0x5FA0004; // Reset after saving default
   }
 
   for (int i = 0; i < sizeof(pins)/sizeof(pins[0]); i++){
@@ -129,16 +115,6 @@ int main(void)
 
   board_init();
   tusb_init();
-
-  sleep_ms(5000);
-
-  gpio_put(LED_PIN, 0);
-
-  char send_buf[80];
-  sprintf(send_buf, "%.10s, Address:%x\n", persistent_json, PERSISTENT_BASE_ADDR);
-  tud_cdc_write_str("Connected\n");
-  tud_cdc_write_str(send_buf);
-  tud_cdc_write_flush();
 
   adc_init();
   adc_gpio_init(26);
@@ -349,10 +325,7 @@ void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts)
 	(void)rts; // TODO: Try resetting
 
 	if (dtr) {
-      char send_buf[80];
-      sprintf(send_buf, "%.10s, Address:%x\n", persistent_json, PERSISTENT_BASE_ADDR);
       tud_cdc_write_str("Connected\n");
-      tud_cdc_write_str(send_buf);
       tud_cdc_write_flush();
       counter = 0;
 	}
