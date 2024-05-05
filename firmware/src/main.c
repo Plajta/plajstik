@@ -252,15 +252,19 @@ void cdc_task(void){
     int count = tud_cdc_read(&buf[counter], 1); // TODO: Test bigger read sizes
 
     if (buf[counter] == 0x04){
-      if (setup_from_json(buf) != 0) {
-        tud_cdc_write("Invalid JSON!", 13);
+      strcpy(runtime_json,buf); // Copy buf to another place in memory because setup_from_json somehow destroys the original data
+      if (setup_from_json(runtime_json) != 0) {
+        tud_cdc_write_str("Invalid JSON!\n");
         tud_cdc_write_flush();
       }
       else{
-        //TODO: Only save to persistent storage after checking if the JSON is valid
+        save_string(PERSISTENT_TARGET_ADDR, buf, BUF_SIZE);
+        tud_cdc_write_str("Saving to persistent storage!\n");
+        tud_cdc_write_flush();
       }
       memset(buf, 0, sizeof(buf));
       counter = 0;
+
       // tud_cdc_read_flush(); // TODO: test this
     }
     else{
@@ -326,6 +330,7 @@ void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts)
 
 	if (dtr) {
       tud_cdc_write_str("Connected\n");
+      tud_cdc_write_str(persistent_json);
       tud_cdc_write_flush();
       counter = 0;
 	}
