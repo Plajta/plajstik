@@ -70,6 +70,7 @@ BUTTON_R3              14
 
 char buf[BUF_SIZE];
 char *persistent_json = (char *)PERSISTENT_BASE_ADDR;
+char runtime_json[BUF_SIZE];
 int counter = 0;
 
 char default_json[] = "{ \
@@ -105,14 +106,19 @@ int main(void)
   gpio_init(LED_PIN);
   gpio_set_dir(LED_PIN, GPIO_OUT);
 
-  if (strlen_s(persistent_json, BUF_SIZE) == BUF_SIZE){ // If persistent_json is not valid, replace it with default_json
+  memcpy(runtime_json, persistent_json, BUF_SIZE);
+  runtime_json[BUF_SIZE-1] = '\0';
+
+  if (setup_from_json(runtime_json) != 0){ // If persistent_json is not valid, replace it with default_json
     char page_aligned[BUF_SIZE]; // One page size is 256 bytes, we want 1k
-    memset(page_aligned, 0xFF, BUF_SIZE);
+    memset(page_aligned, '\0', BUF_SIZE);
     strcpy(page_aligned, default_json);
     uint32_t ints = save_and_disable_interrupts();
     flash_range_erase(PERSISTENT_TARGET_ADDR, FLASH_SECTOR_SIZE); // Probably not needed but left it here just to be sure
     flash_range_program(PERSISTENT_TARGET_ADDR, page_aligned, BUF_SIZE);
     restore_interrupts(ints);
+    gpio_put(LED_PIN, 1);
+    while (1);
   }
 
   for (int i = 0; i < sizeof(pins)/sizeof(pins[0]); i++){
@@ -123,18 +129,20 @@ int main(void)
 
   board_init();
   tusb_init();
-  stdio_init_all();
+
+  sleep_ms(5000);
+
+  gpio_put(LED_PIN, 0);
+
+  char send_buf[80];
+  sprintf(send_buf, "%.10s, Address:%x\n", persistent_json, PERSISTENT_BASE_ADDR);
+  tud_cdc_write_str("Connected\n");
+  tud_cdc_write_str(send_buf);
+  tud_cdc_write_flush();
 
   adc_init();
   adc_gpio_init(26);
   adc_gpio_init(27);
-
-  gpio_put(LED_PIN, 1);
-
-  if (setup_from_json(persistent_json) != 0) {
-    tud_cdc_write("Invalid JSON!", 13);
-    tud_cdc_write_flush();
-  }
 
   while (1){
     tud_task();
