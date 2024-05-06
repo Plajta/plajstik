@@ -33,12 +33,12 @@
 
 #include "bsp/board.h"
 #include "tusb.h"
-
 #include "usb_descriptors.h"
 
-#include "../include/tiny-json.h"
-#include "../include/stringmap.h"
-#include "../include/utils.h"
+#include "tiny-json.h"
+#include "maps.h"
+#include "utils.h"
+#include "tusb_callbacks.h"
 
 extern uint32_t ADDR_PERSISTENT[];
 #define PERSISTENT_BASE_ADDR (uint32_t)(ADDR_PERSISTENT)
@@ -80,7 +80,7 @@ static_assert(sizeof(default_json) / sizeof(default_json[0]) < BUF_SIZE, "BUF_SI
 
 const int pins[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 int keymap[15] = {-1};
-int dpad[4] = {-1}; // Up, right, down, left
+int dpad_keymap[4] = {-1}; // Up, right, down, left
 
 //--------------------------------------------------------------------+
 // MACRO CONSTANT TYPEDEF PROTYPES
@@ -149,30 +149,6 @@ uint32_t get_all_buttons(){
   return output;
 }
 
-int get_dpad_dir(){
-  int output[4] = {0}; // Up, right, down, left
-
-  for (int i = 0; i < 4; i++){
-    if (dpad[i] > -1){
-      output[i] = !gpio_get(dpad[i]); // Invert because of pull-up
-    }
-  }
-
-  // Diagonal directions
-  if (output[0] && output[1]) return 2; // Up-Right
-  if (output[2] && output[1]) return 4; // Down-Right
-  if (output[2] && output[3]) return 6; // Down-Left
-  if (output[0] && output[3]) return 8; // Up-Left
-
-  // Straight directions
-  if (output[0]) return 1; // Up
-  if (output[1]) return 3; // Right
-  if (output[2]) return 5; // Down
-  if (output[3]) return 7; // Left
-
-  return 0; // No direction pressed
-}
-
 //--------------------------------------------------------------------+
 // USB HID
 //--------------------------------------------------------------------+
@@ -188,11 +164,19 @@ static void send_hid_report(uint32_t btn)
     .hat = 0, .buttons = 0
   };
 
+  uint8_t dpad_out[4] = {0}; // Up, right, down, left
+
+  for (uint8_t i = 0; i < 4; i++){
+    if (dpad_keymap[i] > -1){
+      dpad_out[i] = !gpio_get(dpad_keymap[i]); // Invert because of pull-up
+    }
+  }
+
   adc_select_input(1);
   report.x = -(adc_read() >> 4) + 128; // TODO: Add a deadzone
   adc_select_input(0);
   report.y = (adc_read() >> 4) - 128;
-  report.hat = get_dpad_dir();
+  report.hat = find_dpad_dir(dpad_out);
   report.buttons = btn;
   tud_hid_report(REPORT_ID_GAMEPAD, &report, sizeof(report));
 }
@@ -240,7 +224,7 @@ int setup_from_json(char* buf){
       if (key > -1) keymap[key] = pin;
       else {
         int key = find_dpad(json_getValue(child));
-        if (key > -1) dpad[key] = pin;
+        if (key > -1) dpad_keymap[key] = pin;
       }
     }
     return 0;
@@ -275,51 +259,6 @@ void cdc_task(void){
       *((volatile uint32_t*)(PPB_BASE + 0x0ED0C)) = 0x5FA0004; // Reset itself, don't know how to handle it
     }
   }
-}
-
-// TODO Test this and clean it
-
-// Invoked when sent REPORT successfully to host
-// Application can use this to send the next report
-// Note: For composite reports, report[0] is report ID
-// void tud_hid_report_complete_cb(uint8_t instance, uint8_t const* report, uint16_t len)
-// {
-//   (void) instance;
-//   (void) len;
-
-//   uint8_t next_report_id = report[0] + 1;
-
-//   if (next_report_id < REPORT_ID_COUNT)
-//   {
-//     send_hid_report(get_all_buttons());
-//   }
-// }
-
-// This is needed even tho it doesn't do anything due to callbacks
-// Invoked when received GET_REPORT control request
-// Application must fill buffer report's content and return its length.
-// Return zero will cause the stack to STALL request
-uint16_t tud_hid_get_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t* buffer, uint16_t reqlen)
-{
-  (void) instance;
-  (void) report_id;
-  (void) report_type;
-  (void) buffer;
-  (void) reqlen;
-
-  return 0;
-}
-
-// This is needed even tho it doesn't do anything due to callbacks
-// Invoked when received SET_REPORT control request or
-// received data on OUT endpoint ( Report ID = 0, Type = 0 )
-void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t const* buffer, uint16_t bufsize)
-{
-  (void) instance;
-  (void) report_id;
-  (void) report_type;
-  (void) buffer;
-  (void) bufsize;
 }
 
 // Invoked when cdc when line state changed e.g connected/disconnected
