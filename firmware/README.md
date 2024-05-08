@@ -21,5 +21,6 @@ And you'll end up with a `.uf2` file inside the build directory.
 Hold down the `BOOT` button of your RP2040 board and then connect it to USB or just reset it.
 It will now appear as a mass storage device on your computer, then just copy the `.uf2` to that device, the board will automatically restart to it.
 
-# Thanks
+# Credits
 Thanks to [tiny-json](https://github.com/rafagafe/tiny-json) for making this a lot easier.
+Thanks to Jan Cumps for his [article](https://community.element14.com/products/raspberry-pi/b/blog/posts/raspberry-pico-c-sdk-reserve-a-flash-memory-block-for-persistent-storage) on element14 for explaining how to setup the linker to free up some space for persistent storage.
