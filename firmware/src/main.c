@@ -248,8 +248,6 @@ void cdc_task(void){
       }
       memset(buf, 0, sizeof(buf));
       counter = 0;
-
-      // tud_cdc_read_flush(); // TODO: test this
     }
     else{
       counter += count; // TODO: Test bigger read sizes
@@ -265,7 +263,7 @@ void cdc_task(void){
 void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts) 
 {
 	(void)itf;
-	(void)rts; // TODO: Try resetting
+	(void)rts;
 
 	if (dtr) {
       tud_cdc_write_str("Connected\n");
