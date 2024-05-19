@@ -1,28 +1,3 @@
-/* 
- * The MIT License (MIT)
- *
- * Copyright (c) 2019 Ha Thach (tinyusb.org)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- *
- */
-
 #include <pico/stdlib.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -31,22 +6,26 @@
 #include "hardware/flash.h"
 #include "hardware/sync.h"
 
+// USB related includes
 #include "bsp/board.h"
 #include "tusb.h"
 #include "usb_descriptors.h"
 
+// Usage specific
 #include "tiny-json.h"
 #include "maps.h"
 #include "utils.h"
 #include "tusb_callbacks.h"
 
+// Pointer to the flash space reserved for persistent JSON storage
 extern uint32_t ADDR_PERSISTENT[];
 #define PERSISTENT_BASE_ADDR (uint32_t)(ADDR_PERSISTENT)
 #define PERSISTENT_TARGET_ADDR (PERSISTENT_BASE_ADDR-XIP_BASE)
 
+// USB and storage buffer size, FLASH_PAGE_SIZE is 256
 #define BUF_SIZE FLASH_PAGE_SIZE*4
 
-#define TU_BIT(n)              (1UL << (n))
+static_assert(BUF_SIZE <= 4096, "BUF_SIZE too big!"); // Ensure that BUF_SIZE is never more than 4K
 
 /*
 BUTTON                 BIT SHIFT
@@ -93,6 +72,7 @@ int setup_from_json(char* buf);
 /*------------- MAIN -------------*/
 int main(void)
 {
+  // LED mostly for debugging purposes
   const uint LED_PIN = PICO_DEFAULT_LED_PIN;
   gpio_init(LED_PIN);
   gpio_set_dir(LED_PIN, GPIO_OUT);
@@ -136,6 +116,7 @@ int main(void)
 // Within 7ms, device must draw an average of current less than 2.5 mA from bus
 void tud_suspend_cb(bool remote_wakeup_en)
 {
+  // TODO: Implement sleep
   (void) remote_wakeup_en;
 }
 
