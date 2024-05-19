@@ -153,10 +153,14 @@ static void send_hid_report(uint32_t btn)
     }
   }
 
+  int8_t adc_out = 0;
+  uint8_t deadzone = 32;
   adc_select_input(1);
-  report.x = -(adc_read() >> 4) + 128; // TODO: Add a deadzone
+  adc_out = (adc_read() >> 4) - 128;
+  report.x = (((adc_out > -deadzone) && (adc_out < deadzone)) ? 0 : adc_out);
   adc_select_input(0);
-  report.y = (adc_read() >> 4) - 128;
+  adc_out = (adc_read() >> 4) - 128;
+  report.y = (((adc_out > -deadzone) && (adc_out < deadzone)) ? 0 : adc_out);
   report.hat = find_dpad_dir(dpad_out);
   report.buttons = btn;
   tud_hid_report(REPORT_ID_GAMEPAD, &report, sizeof(report));
