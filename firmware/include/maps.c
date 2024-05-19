@@ -1,6 +1,7 @@
 #include <string.h>
+#include <stdint.h>
 
-int get_pin(char const* input) {
+uint8_t get_pin(char const* input) {
   if (!strcmp(input, "btn0")) return 0; // These will get real names, that's why i used this
   if (!strcmp(input, "btn1")) return 1;
   if (!strcmp(input, "btn2")) return 2;
@@ -14,7 +15,7 @@ int get_pin(char const* input) {
   return -1;
 };
 
-int find_mapping(char const* input) {
+uint8_t find_mapping(char const* input) {
   if (!strcmp(input, "a")) return 0; // WILL DO BETTER
   if (!strcmp(input, "b")) return 1;
   if (!strcmp(input, "x")) return 3;
@@ -31,10 +32,26 @@ int find_mapping(char const* input) {
   return -1;
 };
 
-int find_dpad(char const* input) {
+uint8_t find_dpad(char const* input) {
   if (!strcmp(input, "dpad_u")) return 0;
   if (!strcmp(input, "dpad_r")) return 1;
   if (!strcmp(input, "dpad_d")) return 2;
   if (!strcmp(input, "dpad_l")) return 3;
   return -1;
 };
+
+uint8_t find_dpad_dir(uint8_t* dpad){
+  // Diagonal directions
+  if (dpad[0] && dpad[1]) return 2; // Up-Right
+  if (dpad[2] && dpad[1]) return 4; // Down-Right
+  if (dpad[2] && dpad[3]) return 6; // Down-Left
+  if (dpad[0] && dpad[3]) return 8; // Up-Left
+
+  // Straight directions
+  if (dpad[0]) return 1; // Up
+  if (dpad[1]) return 3; // Right
+  if (dpad[2]) return 5; // Down
+  if (dpad[3]) return 7; // Left
+
+  return 0; // No direction pressed
+}
