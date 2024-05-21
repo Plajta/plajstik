@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include "hardware/adc.h"
 #include "hardware/flash.h"
 #include "hardware/sync.h"
@@ -60,6 +61,8 @@ static_assert(sizeof(default_json) / sizeof(default_json[0]) < BUF_SIZE, "BUF_SI
 const int pins[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 int keymap[15] = {-1};
 int dpad_keymap[4] = {-1}; // Up, right, down, left
+
+double deadzone = 32.;
 
 //--------------------------------------------------------------------+
 // MACRO CONSTANT TYPEDEF PROTYPES
@@ -153,14 +156,19 @@ static void send_hid_report(uint32_t btn)
     }
   }
 
-  int8_t adc_out = 0;
-  uint8_t deadzone = 32;
+  int8_t adc_x, adc_y = 0;
   adc_select_input(1);
-  adc_out = (adc_read() >> 4) - 128;
-  report.x = (((adc_out > -deadzone) && (adc_out < deadzone)) ? 0 : adc_out);
+  adc_x = (adc_read() >> 4) - 128;
   adc_select_input(0);
-  adc_out = (adc_read() >> 4) - 128;
-  report.y = (((adc_out > -deadzone) && (adc_out < deadzone)) ? 0 : adc_out);
+  adc_y = (adc_read() >> 4) - 128;
+
+  if (sqrt((adc_x*adc_x) + (adc_y*adc_y)) > deadzone){
+    report.x = adc_x;
+    report.y = adc_y;
+  }
+  else
+    report.x = report.y = 0;
+
   report.hat = find_dpad_dir(dpad_out);
   report.buttons = btn;
   tud_hid_report(REPORT_ID_GAMEPAD, &report, sizeof(report));
