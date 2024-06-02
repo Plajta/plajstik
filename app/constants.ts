@@ -43,47 +43,47 @@ export const keybinds = [
 
 export const buttons = [
     {
-        name: "btn1",
+        pinNumber: 1,
         label: "Postraní tlačítko 1",
         position: "right",
     },
     {
-        name: "btn2",
+        pinNumber: 2,
         label: "Postraní tlačítko 2",
         position: "right",
     },
     {
-        name: "btn3",
+        pinNumber: 3,
         label: "Tlačítko joysticku",
         position: "right",
     },
     {
-        name: "btn4",
+        pinNumber: 4,
         label: "Macro tlačítko 1",
         position: "left",
     },
     {
-        name: "btn5",
+        pinNumber: 5,
         label: "Macro tlačítko 2",
         position: "top",
     },
     {
-        name: "btn6",
+        pinNumber: 6,
         label: "Macro tlačítko 3",
         position: "left",
     },
     {
-        name: "btn7",
+        pinNumber: 7,
         label: "Macro tlačítko 4",
         position: "right",
     },
     {
-        name: "btn8",
+        pinNumber: 8,
         label: "Macro tlačítko 5",
         position: "right",
     },
     {
-        name: "dpad",
+        pinNumber: 9,
         label: "D-Pad",
         position: "right",
     },

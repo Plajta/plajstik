@@ -7,7 +7,7 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { Button } from "~/components/ui/button";
 
 export interface Keybinding {
-    name: string;
+    pinNumber: number;
     action: string;
 }
 

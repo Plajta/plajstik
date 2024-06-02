@@ -21,9 +21,9 @@ interface ButtonLabelProps {
 
 export function ButtonLabel({ keymap, setKeymap, object, labelMenus, setLabelMenus }: ButtonLabelProps) {
     const menu = useMemo(() => labelMenus.find((item) => item.id === object.uuid), [labelMenus]);
-    const button = useMemo(() => buttons.find((button) => button.name === object.userData.prop), [object]);
+    const button = useMemo(() => buttons.find((button) => button.pinNumber === object.userData.prop), [object]);
     const keybinding = useMemo(
-        () => keybinds.find((bind) => bind.name === keymap.find((item) => item.name === button?.name)?.action),
+        () => keybinds.find((bind) => bind.name === keymap.find((item) => item.pinNumber === button?.pinNumber)?.action),
         [keymap],
     );
 
@@ -71,7 +71,7 @@ export function ButtonLabel({ keymap, setKeymap, object, labelMenus, setLabelMen
                                             onClick={() =>
                                                 setKeymap((prev) =>
                                                     prev.map((bind) => {
-                                                        if (bind.name === button.name) {
+                                                        if (bind.pinNumber === button.pinNumber) {
                                                             bind.action = tag.name;
                                                         }
 

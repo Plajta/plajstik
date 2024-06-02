@@ -52,14 +52,12 @@ char *persistent_json = (char *)PERSISTENT_BASE_ADDR;
 char runtime_json[BUF_SIZE];
 int counter = 0;
 
-char default_json[] = "{\"btn6\": \"dpad_u\", \"btn7\": \"dpad_r\", \"btn8\": \"dpad_d\", \"btn9\": \"dpad_l\", \
-\"btn5\": \"l3\", \"btn4\": \"a\", \"btn3\": \"b\", \"btn0\": \"select\", \"btn1\": \"start\"}";
+char default_json[] = "{\"version\":1,\"buttons\":{\"select\":0,\"start\":1,\"b\":3,\"a\":4,\"l3\":5,\"dpad_u\":6,\"dpad_r\":7,\"dpad_d\":8,\"dpad_l\":9}}";
 
 static_assert(sizeof(default_json) / sizeof(default_json[0]) < BUF_SIZE, "BUF_SIZE mismatch!"); // Ensure that default_json never is more than 1024 otherwise risk flash damage from constant rewriting
 
-const int pins[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-int keymap[15] = {-1};
-int dpad_keymap[4] = {-1}; // Up, right, down, left
+int8_t keymap[15] = {[0 ... 14] = -1};
+int8_t dpad_keymap[4] = {[0 ... 3] = -1}; // Up, right, down, left
 
 //--------------------------------------------------------------------+
 // MACRO CONSTANT TYPEDEF PROTYPES
@@ -67,7 +65,6 @@ int dpad_keymap[4] = {-1}; // Up, right, down, left
 
 void hid_task(void);
 void cdc_task(void);
-int setup_from_json(char* buf);
 
 /*------------- MAIN -------------*/
 int main(void)
@@ -80,17 +77,31 @@ int main(void)
   memcpy(runtime_json, persistent_json, BUF_SIZE);
   runtime_json[BUF_SIZE-1] = '\0';
 
-  if (setup_from_json(runtime_json) != 0){ // If json in flash is not valid, replace it with default_json
+  if (json_validity(runtime_json) != 0){ // If json in flash is not valid, replace it with default_json
     save_string(PERSISTENT_TARGET_ADDR, default_json, BUF_SIZE);
     gpio_put(LED_PIN, 1);
     sleep_ms(2000);
     *((volatile uint32_t*)(PPB_BASE + 0x0ED0C)) = 0x5FA0004; // Reset after saving default
   }
 
-  for (int i = 0; i < sizeof(pins)/sizeof(pins[0]); i++){
-    gpio_init(pins[i]);
-    gpio_set_dir(pins[i], GPIO_IN);
-    gpio_pull_up(pins[i]);
+  memcpy(runtime_json, persistent_json, BUF_SIZE); // Copy again because TinyJSON destorys the original for some reason
+  runtime_json[BUF_SIZE-1] = '\0';
+  json_setup(runtime_json, keymap, dpad_keymap);
+
+  for (int i = 0; i < sizeof(keymap)/sizeof(keymap[0]); i++){
+    if (keymap[i] > -1){
+      gpio_init(keymap[i]);
+      gpio_set_dir(keymap[i], GPIO_IN);
+      gpio_pull_up(keymap[i]);
+    }
+  }
+
+  for (int i = 0; i < sizeof(dpad_keymap)/sizeof(dpad_keymap[0]); i++){
+    if (dpad_keymap[i] > -1){
+      gpio_init(dpad_keymap[i]);
+      gpio_set_dir(dpad_keymap[i], GPIO_IN);
+      gpio_pull_up(dpad_keymap[i]);
+    }
   }
 
   board_init();
@@ -176,7 +187,6 @@ void hid_task(void)
 
   uint32_t const btn = get_all_buttons();
 
-
   // Remote wakeup
   if ( tud_suspended() && btn > 0 )
   {
@@ -190,42 +200,21 @@ void hid_task(void)
   }
 }
 
-// Parse JSON from string and map keys to pins
-int setup_from_json(char* buf){
-  json_t mem[32]; // This buffer size should be enough because the RP2040 only has 30 IO pins
-  json_t const* json = json_create(buf, mem, sizeof mem / sizeof *mem );
-  if ( !json ) {
-    return 1;
-  }
-  else{
-    json_t const* child;
-    for(child = json_getChild( json ); child != 0; child = json_getSibling( child )) {
-      int pin = get_pin(json_getName(child));
-      int key = find_mapping(json_getValue(child));
-      if (key > -1) keymap[key] = pin;
-      else {
-        int key = find_dpad(json_getValue(child));
-        if (key > -1) dpad_keymap[key] = pin;
-      }
-    }
-    return 0;
-  }
-}
-
 void cdc_task(void){
   if (tud_cdc_available()) {
     int count = tud_cdc_read(&buf[counter], 1); // TODO: Test bigger read sizes
 
     if (buf[counter] == 0x04){
-      strcpy(runtime_json,buf); // Copy buf to another place in memory because setup_from_json somehow destroys the original data
-      if (setup_from_json(runtime_json) != 0) {
-        tud_cdc_write_str("Invalid JSON!\n");
+      strcpy(runtime_json,buf); // Copy buf to another place in memory because TinyJSON somehow destroys the original data
+      if (json_validity(runtime_json) != 0) {
+        tud_cdc_write_str("Invalid JSON!\n\r");
         tud_cdc_write_flush();
       }
       else{
         save_string(PERSISTENT_TARGET_ADDR, buf, BUF_SIZE);
-        tud_cdc_write_str("Saving to persistent storage!\n");
+        tud_cdc_write_str("Saving to persistent storage!\n\r");
         tud_cdc_write_flush();
+        *((volatile uint32_t*)(PPB_BASE + 0x0ED0C)) = 0x5FA0004; // Reset to load new pins
       }
       memset(buf, 0, sizeof(buf));
       counter = 0;
@@ -247,8 +236,9 @@ void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts)
 	(void)rts;
 
 	if (dtr) {
-      tud_cdc_write_str("Connected\n");
+      tud_cdc_write_str("Connected\n\r");
       tud_cdc_write_str(persistent_json);
+      tud_cdc_write_str("\n\r\x04");
       tud_cdc_write_flush();
       counter = 0;
 	}

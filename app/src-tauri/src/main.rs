@@ -12,7 +12,7 @@ fn main() {
 
 #[derive(serde::Serialize, serde::Deserialize   )]
 struct Keybinding {
-    name: String,
+    pin_number: u16,
     action: String,
 }
 
@@ -23,47 +23,47 @@ fn get_keymap() -> Vec<Keybinding> {
     let mut keybindings = Vec::new();
 
     keybindings.push(Keybinding {
-        name: "btn1".to_string(),
+        pin_number: 1,
         action: "a".to_string()
     });
 
     keybindings.push(Keybinding {
-        name: "btn2".to_string(),
+        pin_number: 2,
         action: "x".to_string()
     });
 
     keybindings.push(Keybinding {
-        name: "btn3".to_string(),
+        pin_number: 3,
         action: "select".to_string()
     });
 
     keybindings.push(Keybinding {
-        name: "btn4".to_string(),
+        pin_number: 4,
         action: "b".to_string()
     });
 
     keybindings.push(Keybinding {
-        name: "btn5".to_string(),
+        pin_number: 5,
         action: "a".to_string()
     });
 
     keybindings.push(Keybinding {
-        name: "btn6".to_string(),
+        pin_number: 6,
         action: "x".to_string()
     });
 
     keybindings.push(Keybinding {
-        name: "btn7".to_string(),
+        pin_number: 7,
         action: "y".to_string()
     });
 
     keybindings.push(Keybinding {
-        name: "btn8".to_string(),
+        pin_number: 8,
         action: "start".to_string()
     });
 
     keybindings.push(Keybinding {
-        name: "dpad".to_string(),
+        pin_number: 9,
         action: "start".to_string()
     });
 
@@ -75,7 +75,7 @@ fn save_keymap(keymap: String) -> bool {
     let keybindings: Vec<Keybinding> = serde_json::from_str(&keymap).unwrap();
 
     for keybinding in keybindings {
-        println!("{}", keybinding.name);
+        println!("{}", keybinding.pin_number);
     }
 
     return true
