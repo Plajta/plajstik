@@ -51,7 +51,7 @@ char *persistent_json = (char *)PERSISTENT_BASE_ADDR;
 char runtime_json[BUF_SIZE];
 int counter = 0;
 
-char default_json[] = "{\"version\":1,\"buttons\":{\"select\":0,\"start\":1,\"b\":3,\"a\":4,\"l3\":5,\"dpad_u\":6,\"dpad_r\":7,\"dpad_d\":8,\"dpad_l\":9}}";
+char default_json[] = "{\"version\":1,\"buttons\":{\"select\":0,\"start\":1,\"b\":3,\"a\":4,\"l3\":5,\"dpad_u\":6,\"dpad_r\":7,\"dpad_d\":8,\"dpad_l\":9},\"deadzone\":16.0}";
 
 static_assert(sizeof(default_json) / sizeof(default_json[0]) < BUF_SIZE, "BUF_SIZE mismatch!"); // Ensure that default_json never is more than 1024 otherwise risk flash damage from constant rewriting
 
@@ -87,7 +87,7 @@ int main(void)
 
   memcpy(runtime_json, persistent_json, BUF_SIZE); // Copy again because TinyJSON destorys the original for some reason
   runtime_json[BUF_SIZE-1] = '\0';
-  json_setup(runtime_json, keymap, dpad_keymap);
+  json_setup(runtime_json, keymap, dpad_keymap, &deadzone);
 
   for (int i = 0; i < sizeof(keymap)/sizeof(keymap[0]); i++){
     if (keymap[i] > -1){

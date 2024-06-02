@@ -57,7 +57,7 @@ int json_validity(char* buf){
     return 0;
 }
 
-void json_setup(char* buf, uint8_t* keymap, uint8_t* keymap_dpad){
+void json_setup(char* buf, int8_t* keymap, int8_t* keymap_dpad, double* deadzone){
     json_t mem[32]; // This buffer size should be enough because the RP2040 only has 30 IO pins
     json_t const* json = json_create(buf, mem, sizeof mem / sizeof *mem);
     json_t const* child;
@@ -71,4 +71,9 @@ void json_setup(char* buf, uint8_t* keymap, uint8_t* keymap_dpad){
             if (key > -1) keymap_dpad[key] = pin;
         }
     }
+    json_t const* deadzone_json = json_getProperty( json, "deadzone" );
+    if (deadzone_json && json_getType( deadzone_json ) == JSON_REAL) {
+        *deadzone = (double)json_getReal(deadzone_json);
+    }
+
 }

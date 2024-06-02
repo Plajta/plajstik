@@ -10,5 +10,6 @@
     "dpad_r": 7,
     "dpad_d": 8,
     "dpad_l": 9
-  }
+  },
+  "deadzone": 16.0
 }
