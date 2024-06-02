@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include "hardware/adc.h"
 #include "hardware/flash.h"
 #include "hardware/sync.h"
@@ -58,6 +59,8 @@ static_assert(sizeof(default_json) / sizeof(default_json[0]) < BUF_SIZE, "BUF_SI
 
 int8_t keymap[15] = {[0 ... 14] = -1};
 int8_t dpad_keymap[4] = {[0 ... 3] = -1}; // Up, right, down, left
+
+double deadzone = 32.;
 
 //--------------------------------------------------------------------+
 // MACRO CONSTANT TYPEDEF PROTYPES
@@ -164,10 +167,19 @@ static void send_hid_report(uint32_t btn)
     }
   }
 
+  int8_t adc_x, adc_y = 0;
   adc_select_input(1);
-  report.x = -(adc_read() >> 4) + 128; // TODO: Add a deadzone
+  adc_x = (adc_read() >> 4) - 128;
   adc_select_input(0);
-  report.y = (adc_read() >> 4) - 128;
+  adc_y = (adc_read() >> 4) - 128;
+
+  if (sqrt((adc_x*adc_x) + (adc_y*adc_y)) > deadzone){
+    report.x = adc_x;
+    report.y = adc_y;
+  }
+  else
+    report.x = report.y = 0;
+
   report.hat = find_dpad_dir(dpad_out);
   report.buttons = btn;
   tud_hid_report(REPORT_ID_GAMEPAD, &report, sizeof(report));
