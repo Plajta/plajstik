@@ -5,7 +5,6 @@
 #include <math.h>
 #include "hardware/adc.h"
 #include "hardware/flash.h"
-#include "hardware/sync.h"
 
 // USB related includes
 #include "bsp/board.h"
@@ -13,7 +12,6 @@
 #include "usb_descriptors.h"
 
 // Usage specific
-#include "tiny-json.h"
 #include "maps.h"
 #include "utils.h"
 #include "tusb_callbacks.h"

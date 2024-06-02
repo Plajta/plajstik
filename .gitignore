@@ -15,5 +15,6 @@ _deps
 .idea/
 
 firmware/build/
+firmware/.cache/
 
 .DS_Store
