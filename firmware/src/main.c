@@ -51,12 +51,14 @@ char *persistent_json = (char *)PERSISTENT_BASE_ADDR;
 char runtime_json[BUF_SIZE];
 int counter = 0;
 
-char default_json[] = "{\"version\":1,\"buttons\":{\"select\":0,\"start\":1,\"b\":3,\"a\":4,\"l3\":5,\"dpad_u\":6,\"dpad_r\":7,\"dpad_d\":8,\"dpad_l\":9},\"deadzone\":16.0}";
+char default_json[] = "{\"version\":1,\"buttons\":{\"select\":0,\"start\":1,\"b\":3,\"a\":4,\"l3\":5,\"dpad_u\":6,\"dpad_r\":7,\"dpad_d\":8,\"dpad_l\":9},\"deadzone\":16.0,\"axes\":{\"x\":1,\"y\":0}}";
 
 static_assert(sizeof(default_json) / sizeof(default_json[0]) < BUF_SIZE, "BUF_SIZE mismatch!"); // Ensure that default_json never is more than 1024 otherwise risk flash damage from constant rewriting
 
 int8_t keymap[15] = {[0 ... 14] = -1};
 int8_t dpad_keymap[4] = {[0 ... 3] = -1}; // Up, right, down, left
+
+int8_t x_adc = -1, y_adc = -1;
 
 double deadzone = 32.;
 
@@ -87,7 +89,7 @@ int main(void)
 
   memcpy(runtime_json, persistent_json, BUF_SIZE); // Copy again because TinyJSON destorys the original for some reason
   runtime_json[BUF_SIZE-1] = '\0';
-  json_setup(runtime_json, keymap, dpad_keymap, &deadzone);
+  json_setup(runtime_json, keymap, dpad_keymap, &deadzone, &x_adc, &y_adc);
 
   for (int i = 0; i < sizeof(keymap)/sizeof(keymap[0]); i++){
     if (keymap[i] > -1){
@@ -165,15 +167,19 @@ static void send_hid_report(uint32_t btn)
     }
   }
 
-  int8_t adc_x, adc_y = 0;
-  adc_select_input(1);
-  adc_x = (adc_read() >> 4) - 128;
-  adc_select_input(0);
-  adc_y = (adc_read() >> 4) - 128;
+  int8_t x = 0, y = 0;
+  if (x_adc > -1){
+    adc_select_input(x_adc);
+    x = (adc_read() >> 4) - 128;
+  }
+  if (y_adc > -1){
+    adc_select_input(y_adc);
+    y = (adc_read() >> 4) - 128;
+  }
 
-  if (sqrt((adc_x*adc_x) + (adc_y*adc_y)) > deadzone){
-    report.x = adc_x;
-    report.y = adc_y;
+  if (sqrt((x*x) + (y*y)) > deadzone){
+    report.x = x;
+    report.y = y;
   }
   else
     report.x = report.y = 0;
