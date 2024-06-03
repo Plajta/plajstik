@@ -60,7 +60,7 @@ int8_t dpad_keymap[4] = {[0 ... 3] = -1}; // Up, right, down, left
 
 int8_t x_adc = -1, y_adc = -1;
 
-double deadzone = 32.;
+double deadzone = 0.;
 
 //--------------------------------------------------------------------+
 // MACRO CONSTANT TYPEDEF PROTYPES
