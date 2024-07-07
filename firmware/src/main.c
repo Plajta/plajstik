@@ -269,7 +269,9 @@ void cdc_task(void) {
     tud_cdc_write_flush();
 
     if (counter + 1 >= BUF_SIZE){
-      *((volatile uint32_t*)(PPB_BASE + 0x0ED0C)) = 0x5FA0004; // Reset itself, don't know how to handle it
+      memset(buf, 0, sizeof(buf));
+      counter = 0;
+      tud_cdc_write_str("\n\rCommand or config too long, clearing buffer\n\r");
     }
   }
 }
