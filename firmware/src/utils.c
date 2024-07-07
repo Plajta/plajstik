@@ -4,6 +4,7 @@
 #include "tiny-json.h"
 #include "utils.h"
 #include "maps.h"
+#include "tusb.h"
 
 size_t strlen_s(const char *str, size_t max_len) { // Replacement for the somehow missing strlen_s function
     const char * end = (const char *)memchr(str, '\0', max_len);
@@ -90,4 +91,13 @@ void json_setup(char* buf, int8_t* keymap, int8_t* keymap_dpad, double* deadzone
         }
     }
 
+}
+
+void utils_tud_cdc_write_s(char character){
+    if (character == '\n' || character == '\r'){
+        tud_cdc_write_str("\n\r");
+    }
+    else{
+        tud_cdc_write(&character, 1);
+    }
 }

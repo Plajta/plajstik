@@ -49,7 +49,14 @@ BUTTON_R3              14
 char buf[BUF_SIZE];
 char *persistent_json = (char *)PERSISTENT_BASE_ADDR;
 char runtime_json[BUF_SIZE];
-int counter = 0;
+
+uint16_t json_len = 0;
+
+uint counter = 0;
+
+bool send_config = false;
+
+uint LED_PIN = PICO_DEFAULT_LED_PIN;
 
 char default_json[] = "{\"version\":1,\"buttons\":{\"select\":0,\"start\":1,\"b\":3,\"a\":4,\"l3\":5,\"dpad_u\":6,\"dpad_r\":7,\"dpad_d\":8,\"dpad_l\":9},\"deadzone\":16.0,\"axes\":{\"x\":1,\"y\":0}}";
 
@@ -73,11 +80,12 @@ void cdc_task(void);
 int main(void)
 {
   // LED mostly for debugging purposes
-  const uint LED_PIN = PICO_DEFAULT_LED_PIN;
   gpio_init(LED_PIN);
   gpio_set_dir(LED_PIN, GPIO_OUT);
 
-  memcpy(runtime_json, persistent_json, BUF_SIZE);
+  json_len = strlen_s(persistent_json, BUF_SIZE);
+
+  memcpy(runtime_json, persistent_json, BUF_SIZE); // Copy because TinyJSON destroys the original for some reason
   runtime_json[BUF_SIZE-1] = '\0';
 
   if (json_validity(runtime_json) != 0){ // If json in flash is not valid, replace it with default_json
@@ -87,9 +95,11 @@ int main(void)
     *((volatile uint32_t*)(PPB_BASE + 0x0ED0C)) = 0x5FA0004; // Reset after saving default
   }
 
-  memcpy(runtime_json, persistent_json, BUF_SIZE); // Copy again because TinyJSON destorys the original for some reason
+  memcpy(runtime_json, persistent_json, BUF_SIZE); // Copy because TinyJSON destroys the original for some reason
   runtime_json[BUF_SIZE-1] = '\0';
   json_setup(runtime_json, keymap, dpad_keymap, &deadzone, &x_adc, &y_adc);
+
+
 
   for (int i = 0; i < sizeof(keymap)/sizeof(keymap[0]); i++){
     if (keymap[i] > -1){
@@ -216,28 +226,47 @@ void hid_task(void)
   }
 }
 
-void cdc_task(void){
-  if (tud_cdc_available()) {
-    int count = tud_cdc_read(&buf[counter], 1); // TODO: Test bigger read sizes
-
+void cdc_task(void) {
+  if (send_config) {
+    // Sending characters in batches longer than one resulted in missing ones
+    if ((counter+1)<=json_len){
+      utils_tud_cdc_write_s(persistent_json[counter]);
+      tud_cdc_write_flush();
+      counter++;
+    }
+    else {
+      send_config = false;
+      counter = 0;
+      tud_cdc_write_str("\x04\n\r");
+      tud_cdc_write_flush();
+    }
+  }
+  else if (tud_cdc_available()) {
+    tud_cdc_read(&buf[counter], 1);
     if (buf[counter] == 0x04){
-      strcpy(runtime_json,buf); // Copy buf to another place in memory because TinyJSON somehow destroys the original data
+      tud_cdc_write_str("\n\r");
+      strcpy(runtime_json, buf); // Copy buf to another place in memory because TinyJSON somehow destroys the original data
       if (json_validity(runtime_json) != 0) {
-        tud_cdc_write_str("Invalid JSON!\n\r");
-        tud_cdc_write_flush();
+        if (strcmp(strupr(buf), "LOAD\x04") == 0){
+          send_config = true;
+        }
+        else{
+          tud_cdc_write_str("Invalid JSON or command!\n\r");
+        }
       }
       else{
         save_string(PERSISTENT_TARGET_ADDR, buf, BUF_SIZE);
         tud_cdc_write_str("Saving to persistent storage!\n\r");
-        tud_cdc_write_flush();
         *((volatile uint32_t*)(PPB_BASE + 0x0ED0C)) = 0x5FA0004; // Reset to load new pins
       }
       memset(buf, 0, sizeof(buf));
       counter = 0;
     }
     else{
-      counter += count; // TODO: Test bigger read sizes
+      utils_tud_cdc_write_s(buf[counter]);
+      counter += 1;
     }
+    tud_cdc_write_flush();
 
     if (counter + 1 >= BUF_SIZE){
       *((volatile uint32_t*)(PPB_BASE + 0x0ED0C)) = 0x5FA0004; // Reset itself, don't know how to handle it
@@ -253,8 +282,6 @@ void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts)
 
 	if (dtr) {
       tud_cdc_write_str("Connected\n\r");
-      tud_cdc_write_str(persistent_json);
-      tud_cdc_write_str("\n\r\x04");
       tud_cdc_write_flush();
       counter = 0;
 	}
