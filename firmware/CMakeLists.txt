@@ -1,6 +1,13 @@
 cmake_minimum_required(VERSION 3.13)
-include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
+
+# initialize pico-sdk from GIT
+# (note this can come from environment, CMake cache etc)
+set(PICO_SDK_FETCH_FROM_GIT on)
+
+include(pico_sdk_import.cmake)
+
 project(plajstik_controller C CXX ASM)
+
 pico_sdk_init()
 add_executable(${PROJECT_NAME}
   src/main.c
