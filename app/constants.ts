@@ -16,20 +16,20 @@ export const keybinds = [
         label: "X",
     },
     {
-        name: "dpad_up",
-        label: "Nahoru",
+        name: "dpad_u",
+        label: "Dpad Up",
     },
     {
-        name: "dpad_down",
-        label: "Dolů",
+        name: "dpad_d",
+        label: "Dpad Down",
     },
     {
-        name: "dpad_right",
-        label: "Doprava",
+        name: "dpad_r",
+        label: "Dpad Right",
     },
     {
-        name: "dpad_left",
-        label: "Doleva",
+        name: "dpad_l",
+        label: "Dpad Left",
     },
     {
         name: "start",

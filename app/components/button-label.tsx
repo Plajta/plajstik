@@ -23,7 +23,10 @@ export function ButtonLabel({ keymap, setKeymap, object, labelMenus, setLabelMen
     const menu = useMemo(() => labelMenus.find((item) => item.id === object.uuid), [labelMenus]);
     const button = useMemo(() => buttons.find((button) => button.pinNumber === object.userData.prop), [object]);
     const keybinding = useMemo(
-        () => keybinds.find((bind) => bind.name === keymap.find((item) => item.pinNumber === button?.pinNumber)?.action),
+        () =>
+            keybinds.find(
+                (bind) => bind.name === keymap.buttons.find((item) => item.pinNumber === button?.pinNumber)?.action,
+            ),
         [keymap],
     );
 
