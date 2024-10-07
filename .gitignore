@@ -18,3 +18,4 @@ firmware/build/
 firmware/.cache/
 
 .DS_Store
+*.FCBak
