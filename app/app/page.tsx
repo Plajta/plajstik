@@ -1,7 +1,5 @@
 "use client";
 
-import { JoystickModel } from "~/components/joystick-model";
-import { Canvas } from "~/components/canvas";
 import React, { useEffect, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { Button } from "~/components/ui/button";
@@ -53,32 +51,21 @@ export default function Home() {
                 <ThemeSwitcher />
             </div>
 
-            {view === "model" ? (
-                <Canvas>
-                    {keymap && (
-                        <JoystickModel
-                            keymap={keymap}
-                            setKeymap={setKeymap as React.Dispatch<React.SetStateAction<Keymap>>}
-                        />
-                    )}
-                </Canvas>
-            ) : (
-                <Editor
-                    height="80%"
-                    language="json"
-                    theme={theme === "light" ? "light" : "vs-dark"}
-                    value={JSON.stringify(keymap, null, "\t")}
-                    onChange={(v) => v && setAa(JSON.parse(v))}
-                    onMount={handleEditorDidMount}
-                    options={{
-                        inlineSuggest: { enabled: true },
-                        fontSize: 16,
-                        formatOnType: true,
-                        autoClosingBrackets: "always",
-                        minimap: { enabled: false },
-                    }}
-                />
-            )}
+            <Editor
+                height="80%"
+                language="json"
+                theme={theme === "light" ? "light" : "vs-dark"}
+                value={JSON.stringify(keymap, null, "\t")}
+                onChange={(v) => v && setAa(JSON.parse(v))}
+                onMount={handleEditorDidMount}
+                options={{
+                    inlineSuggest: { enabled: true },
+                    fontSize: 16,
+                    formatOnType: true,
+                    autoClosingBrackets: "always",
+                    minimap: { enabled: false },
+                }}
+            />
 
             <div className="flex justify-center flex-grow gap-4 items-center">
                 {ports && (
