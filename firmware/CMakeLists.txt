@@ -15,17 +15,17 @@ add_executable(${PROJECT_NAME}
 
 target_sources(${PROJECT_NAME} PRIVATE
   src/main.c
-  include/usb_descriptors.c
+  src/usb_descriptors.c
+  src/tiny-json.c
+  src/maps.c
+  src/utils.c
+  src/tusb_callbacks.c
   include/usb_descriptors.h
   include/tusb_config.h
-  include/tiny-json.c
   include/tiny-json.h
-  include/maps.c
   include/maps.h
   include/utils.h
-  src/utils.c
   include/tusb_callbacks.h
-  include/tusb_callbacks.c
 )
 
 pico_enable_stdio_usb(${PROJECT_NAME} 1)

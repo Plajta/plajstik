@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <string.h>
 #include "hardware/flash.h"
 #include "hardware/sync.h"
@@ -14,6 +15,10 @@ size_t strlen_s(const char *str, size_t max_len) { // Replacement for the someho
         return end - str;
 }
 
+int16_t clamp(int16_t d, int16_t min, int16_t max) {
+  const int16_t t = d < min ? min : d;
+  return t > max ? max : t;
+}
 
 int save_string(uint32_t target_addr, char* buf, int max_len){
     if (target_addr + max_len > 0x200000)
@@ -58,7 +63,7 @@ int json_validity(char* buf){
     return 0;
 }
 
-void json_setup(char* buf, int8_t* keymap, int8_t* keymap_dpad, double* deadzone, int8_t* x_adc, int8_t* y_adc){
+void json_setup(char* buf, int8_t* keymap, int8_t* keymap_dpad, double* deadzone, int8_t* x_adc, int8_t* y_adc, float* x_multiplier, float* y_multiplier){
     json_t mem[32]; // This buffer size should be enough because the RP2040 only has 30 IO pins
     json_t const* json = json_create(buf, mem, sizeof mem / sizeof *mem);
     json_t const* child;
@@ -88,6 +93,22 @@ void json_setup(char* buf, int8_t* keymap, int8_t* keymap_dpad, double* deadzone
         json_t const* y_json = json_getProperty( parent, "y" );
         if (y_json && json_getType( y_json ) == JSON_INTEGER) {
             *y_adc = (int)json_getInteger( y_json );
+        }
+    }
+
+    parent = json_getProperty(json, "multiplier");
+
+    *x_multiplier = *y_multiplier = 1.0;
+
+    if (parent) {
+        json_t const* x_json = json_getProperty( parent, "x" );
+        if (x_json && json_getType( x_json ) == JSON_REAL) {
+            *x_multiplier = (float)json_getReal( x_json );
+        }
+
+        json_t const* y_json = json_getProperty( parent, "y" );
+        if (y_json && json_getType( y_json ) == JSON_REAL) {
+            *y_multiplier = (float)json_getReal( y_json );
         }
     }
 

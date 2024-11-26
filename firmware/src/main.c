@@ -1,8 +1,10 @@
 #include <pico/stdlib.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include "class/cdc/cdc_device.h"
 #include "hardware/adc.h"
 #include "hardware/flash.h"
 
@@ -58,7 +60,7 @@ bool send_config = false;
 
 uint LED_PIN = PICO_DEFAULT_LED_PIN;
 
-char default_json[] = "{\"version\":1,\"buttons\":{\"select\":0,\"start\":1,\"b\":3,\"a\":4,\"l3\":5,\"dpad_u\":6,\"dpad_r\":7,\"dpad_d\":8,\"dpad_l\":9},\"deadzone\":16.0,\"axes\":{\"x\":1,\"y\":0}}";
+char default_json[] = "{\"version\":1,\"buttons\":{\"select\":0,\"start\":1,\"b\":3,\"a\":4,\"l3\":5,\"dpad_u\":6,\"dpad_r\":7,\"dpad_d\":8,\"dpad_l\":9},\"deadzone\":16.0,\"axes\":{\"x\":1,\"y\":0},\"multiplier\":{\"x\":1.0,\"y\":1.0}}";
 
 static_assert(sizeof(default_json) / sizeof(default_json[0]) < BUF_SIZE, "BUF_SIZE mismatch!"); // Ensure that default_json never is more than 1024 otherwise risk flash damage from constant rewriting
 
@@ -66,6 +68,8 @@ int8_t keymap[15] = {[0 ... 14] = -1};
 int8_t dpad_keymap[4] = {[0 ... 3] = -1}; // Up, right, down, left
 
 int8_t x_adc = -1, y_adc = -1;
+
+float x_multiplier, y_multiplier = 0;
 
 double deadzone = 0.;
 
@@ -97,7 +101,7 @@ int main(void)
 
   memcpy(runtime_json, persistent_json, BUF_SIZE); // Copy because TinyJSON destroys the original for some reason
   runtime_json[BUF_SIZE-1] = '\0';
-  json_setup(runtime_json, keymap, dpad_keymap, &deadzone, &x_adc, &y_adc);
+  json_setup(runtime_json, keymap, dpad_keymap, &deadzone, &x_adc, &y_adc, &x_multiplier, &y_multiplier);
 
 
 
@@ -181,10 +185,12 @@ static void send_hid_report(uint32_t btn)
   if (x_adc > -1){
     adc_select_input(x_adc);
     x = (adc_read() >> 4) - 128;
+    x = (int8_t)clamp((int16_t)(x * x_multiplier), INT8_MIN, INT8_MAX);
   }
   if (y_adc > -1){
     adc_select_input(y_adc);
     y = (adc_read() >> 4) - 128;
+    y = (int8_t)clamp((int16_t)(y * y_multiplier), INT8_MIN, INT8_MAX);
   }
 
   if (sqrt((x*x) + (y*y)) > deadzone){
@@ -277,7 +283,7 @@ void cdc_task(void) {
 }
 
 // Invoked when cdc when line state changed e.g connected/disconnected
-void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts) 
+void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts)
 {
 	(void)itf;
 	(void)rts;

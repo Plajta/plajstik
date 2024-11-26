@@ -29,6 +29,10 @@ Completely configured, completely hypothetical config JSON:
   "axes": {
     "x": 1,
     "y": 0
+  },
+  "multiplier": {
+    "x": 1.0,
+    "y": 1.0
   }
 }
 ```
