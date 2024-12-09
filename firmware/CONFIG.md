@@ -56,7 +56,8 @@ All possible buttons: `a`, `b`, `x`, `y`, `l1`, `r1`, `l2`, `r2`, `l3`, `l3`, `s
 Describes the diameter of the deadzone, this number cannot really be compared to anything so it's ideal size is really only a matter of trial and error.
 
 ## Axes
-*Currently missing support for triggers and right analog stick*
+**Currently missing support for triggers and right analog stick**
+
 List of axis names and to what ADC inputs are they bound to
 
 Example:
