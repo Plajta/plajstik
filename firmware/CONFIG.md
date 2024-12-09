@@ -64,3 +64,12 @@ Example:
 "x": 1
 ```
 X left analog axis is bound to ADC 1.
+
+## Multiplier
+Floating point numbers that multiply the ADC output so the range can be limited, extended or inverted.
+
+Example:
+```
+"y": -0.32
+```
+Y axis is multiplied by -0.32.
