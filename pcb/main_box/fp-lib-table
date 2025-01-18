@@ -1,0 +1,5 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "MCU_RaspberryPi_and_Boards")(type "KiCad")(uri "${KIPRJMOD}/RP-Pico Libraries/MCU_RaspberryPi_and_Boards.pretty")(options "")(descr ""))
+  (lib (name "Audio-jacks Libraries")(type "KiCad")(uri "${KIPRJMOD}/Audio-jacks Libraries/Audio-jacks Libraries.pretty")(options "")(descr ""))
+)
