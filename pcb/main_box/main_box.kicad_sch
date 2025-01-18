@@ -217,7 +217,7 @@
 				)
 			)
 		)
-		(symbol "Connector_Generic:Conn_01x06"
+		(symbol "Connector_Generic_MountingPin:Conn_01x06_MountingPin"
 			(pin_names
 				(offset 1.016) hide)
 			(exclude_from_sim no)
@@ -231,12 +231,13 @@
 					)
 				)
 			)
-			(property "Value" "Conn_01x06"
-				(at 0 -10.16 0)
+			(property "Value" "Conn_01x06_MountingPin"
+				(at 1.27 -10.16 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
+					(justify left)
 				)
 			)
 			(property "Footprint" ""
@@ -257,7 +258,7 @@
 					(hide yes)
 				)
 			)
-			(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(property "Description" "Generic connectable mounting pin connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
 				(at 0 0 0)
 				(effects
 					(font
@@ -275,7 +276,7 @@
 					(hide yes)
 				)
 			)
-			(property "ki_fp_filters" "Connector*:*_1x??_*"
+			(property "ki_fp_filters" "Connector*:*_1x??-1MP*"
 				(at 0 0 0)
 				(effects
 					(font
@@ -284,7 +285,7 @@
 					(hide yes)
 				)
 			)
-			(symbol "Conn_01x06_1_1"
+			(symbol "Conn_01x06_MountingPin_1_1"
 				(rectangle
 					(start -1.27 -7.493)
 					(end 0 -7.747)
@@ -360,6 +361,26 @@
 					)
 					(fill
 						(type background)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.016 -9.652) (xy 1.016 -9.652)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(text "Mounting"
+					(at 0 -9.271 0)
+					(effects
+						(font
+							(size 0.381 0.381)
+						)
 					)
 				)
 				(pin passive line
@@ -463,6 +484,24 @@
 						)
 					)
 					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -12.7 90)
+					(length 3.048)
+					(name "MountPin"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "MP"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1764,6 +1803,12 @@
 		)
 	)
 	(junction
+		(at 133.35 57.15)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "03d10025-96b3-46d8-b18d-184253f6c83e")
+	)
+	(junction
 		(at 22.86 60.96)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1838,6 +1883,16 @@
 			(type default)
 		)
 		(uuid "06f4c790-fc6c-4444-9310-80876b0a03fc")
+	)
+	(wire
+		(pts
+			(xy 142.24 54.61) (xy 142.24 57.15)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0793090f-84e5-4c3a-a26b-317e5fb50e02")
 	)
 	(wire
 		(pts
@@ -1988,6 +2043,16 @@
 			(type default)
 		)
 		(uuid "2227a1fb-50d4-4d2f-a7a0-510a457d1bab")
+	)
+	(wire
+		(pts
+			(xy 142.24 57.15) (xy 133.35 57.15)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "22a7a96e-1353-48fa-b083-4f39535f5753")
 	)
 	(wire
 		(pts
@@ -2161,7 +2226,7 @@
 	)
 	(wire
 		(pts
-			(xy 133.35 52.07) (xy 133.35 49.53)
+			(xy 133.35 59.69) (xy 133.35 57.15)
 		)
 		(stroke
 			(width 0)
@@ -2331,7 +2396,7 @@
 	)
 	(wire
 		(pts
-			(xy 195.58 100.33) (xy 184.15 100.33)
+			(xy 195.58 105.41) (xy 184.15 105.41)
 		)
 		(stroke
 			(width 0)
@@ -2581,6 +2646,16 @@
 	)
 	(wire
 		(pts
+			(xy 133.35 57.15) (xy 133.35 49.53)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "aa460a7b-8436-40bd-9323-9036f03905d6")
+	)
+	(wire
+		(pts
 			(xy 224.79 57.15) (xy 236.22 57.15)
 		)
 		(stroke
@@ -2691,7 +2766,7 @@
 	)
 	(wire
 		(pts
-			(xy 184.15 105.41) (xy 195.58 105.41)
+			(xy 184.15 100.33) (xy 195.58 100.33)
 		)
 		(stroke
 			(width 0)
@@ -3153,7 +3228,7 @@
 		(uuid "7b4ab1b3-4729-4655-a5c9-754dba293ece")
 	)
 	(label "GPIO3"
-		(at 184.15 100.33 0)
+		(at 184.15 105.41 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -3461,7 +3536,7 @@
 		(uuid "de1bc7fd-caf8-4bf0-a537-2be0a9c32b0a")
 	)
 	(label "GPIO5"
-		(at 184.15 105.41 0)
+		(at 184.15 100.33 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -3574,7 +3649,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Button_Switch_THT:SW_PUSH_6mm"
+		(property "Footprint" "Audio-jacks Libraries:SW_PUSH_combined_6mm"
 			(at 205.74 52.07 0)
 			(effects
 				(font
@@ -3756,87 +3831,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector_Generic:Conn_01x06")
-		(at 142.24 44.45 0)
-		(mirror x)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "1b495952-1acb-4cd5-b0bd-81f77da074ab")
-		(property "Reference" "J13"
-			(at 142.24 30.48 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "Conn_01x06"
-			(at 142.24 33.02 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Connector_JST:JST_XH_B6B-XH-A_1x06_P2.50mm_Vertical"
-			(at 142.24 44.45 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 142.24 44.45 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 142.24 44.45 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "eba77f7f-400f-4f3d-9c0a-b2048cdf798b")
-		)
-		(pin "1"
-			(uuid "9499e96a-d6eb-4120-9c55-26f5eb818a1b")
-		)
-		(pin "3"
-			(uuid "3bd92f72-6c07-441a-9bc6-4807f693ee97")
-		)
-		(pin "4"
-			(uuid "d368dbaa-33c8-4e7a-b878-1ae64f1a651e")
-		)
-		(pin "6"
-			(uuid "0e6adbce-68da-4cfa-ad6e-3b7220766012")
-		)
-		(pin "5"
-			(uuid "4add52d6-660d-4207-b5df-4eca99752ded")
-		)
-		(instances
-			(project ""
-				(path "/9a1cce8c-db89-40d4-b1fe-9e94eaa8821d"
-					(reference "J13")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Switch:SW_Push")
 		(at 241.3 36.83 0)
 		(unit 1)
@@ -3862,7 +3856,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Button_Switch_THT:SW_PUSH_6mm"
+		(property "Footprint" "Audio-jacks Libraries:SW_PUSH_combined_6mm"
 			(at 241.3 31.75 0)
 			(effects
 				(font
@@ -3899,6 +3893,90 @@
 			(project "main_box"
 				(path "/9a1cce8c-db89-40d4-b1fe-9e94eaa8821d"
 					(reference "SW5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic_MountingPin:Conn_01x06_MountingPin")
+		(at 142.24 41.91 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "27fbad87-907e-45f0-9e97-72ba4c2eb347")
+		(property "Reference" "J9"
+			(at 136.652 28.956 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "Conn_01x06_MountingPin"
+			(at 136.652 31.496 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 142.24 41.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 142.24 41.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connectable mounting pin connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 142.24 41.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "850a7149-cfba-4a3b-8ced-30a5c14e0788")
+		)
+		(pin "2"
+			(uuid "933cadb0-6a52-4be4-a279-db7ec11012cd")
+		)
+		(pin "MP"
+			(uuid "a26c2f37-838d-4843-9b63-905dc5061307")
+		)
+		(pin "6"
+			(uuid "f2ab948d-d933-4d0e-8d72-fd8fe92213bb")
+		)
+		(pin "3"
+			(uuid "2db0ef4d-bb70-4bbd-923a-5d4635e98658")
+		)
+		(pin "4"
+			(uuid "ee028fbd-0922-4a25-ac78-8711c1c1d8b0")
+		)
+		(pin "5"
+			(uuid "348c361e-8359-4ce3-ae92-b92addc66c5e")
+		)
+		(instances
+			(project ""
+				(path "/9a1cce8c-db89-40d4-b1fe-9e94eaa8821d"
+					(reference "J9")
 					(unit 1)
 				)
 			)
@@ -4254,7 +4332,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Button_Switch_THT:SW_PUSH_6mm"
+		(property "Footprint" "Audio-jacks Libraries:SW_PUSH_combined_6mm"
 			(at 205.74 31.75 0)
 			(effects
 				(font
@@ -4434,7 +4512,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 133.35 52.07 0)
+		(at 133.35 59.69 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -4444,7 +4522,7 @@
 		(fields_autoplaced yes)
 		(uuid "55813acc-334e-4f41-9359-7671c68cbffb")
 		(property "Reference" "#PWR028"
-			(at 133.35 58.42 0)
+			(at 133.35 66.04 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4453,7 +4531,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 133.35 57.15 0)
+			(at 133.35 64.77 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4461,7 +4539,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 133.35 52.07 0)
+			(at 133.35 59.69 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4470,7 +4548,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 133.35 52.07 0)
+			(at 133.35 59.69 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4479,7 +4557,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 133.35 52.07 0)
+			(at 133.35 59.69 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4928,7 +5006,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Button_Switch_THT:SW_PUSH_6mm"
+		(property "Footprint" "Audio-jacks Libraries:SW_PUSH_combined_6mm"
 			(at 168.91 52.07 0)
 			(effects
 				(font
@@ -5663,7 +5741,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Button_Switch_THT:SW_PUSH_6mm"
+		(property "Footprint" "Audio-jacks Libraries:SW_PUSH_combined_6mm"
 			(at 168.91 31.75 0)
 			(effects
 				(font
@@ -5871,7 +5949,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Button_Switch_THT:SW_PUSH_6mm"
+		(property "Footprint" "Audio-jacks Libraries:SW_PUSH_combined_6mm"
 			(at 241.3 52.07 0)
 			(effects
 				(font
