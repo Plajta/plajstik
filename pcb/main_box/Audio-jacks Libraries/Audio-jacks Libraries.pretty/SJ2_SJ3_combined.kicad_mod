@@ -351,16 +351,18 @@
 		(remove_unused_layers no)
 		(uuid "695b68aa-6ebd-4b81-a1a8-0b1edd6dafbb")
 	)
-	(pad "R1" smd rect
+	(pad "R1" smd roundrect
 		(at 6.25 3.9825 90)
-		(size 3.465 2)
+		(size 3.465 2.5)
 		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.15)
 		(uuid "712ef20b-4802-4945-b5dc-b38f85c3b216")
 	)
-	(pad "R2" smd rect
+	(pad "R2" smd roundrect
 		(at 6.25 -3.9825 90)
-		(size 3.465 2)
+		(size 3.465 2.5)
 		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.15)
 		(uuid "ff505795-15fd-4b18-ab28-00e7fbd40bbd")
 	)
 	(pad "R2" thru_hole circle
@@ -379,16 +381,18 @@
 		(remove_unused_layers no)
 		(uuid "b4c455e5-e1a3-4f34-8864-37b8b86eefa7")
 	)
-	(pad "S" smd rect
-		(at 7.75 0 90)
-		(size 2 3.5)
+	(pad "S" smd roundrect
+		(at 7.69 0 90)
+		(size 2.5 3.62)
 		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.15)
 		(uuid "fb1b1b38-0e63-4392-acce-1e372ae8a61b")
 	)
-	(pad "T" smd rect
-		(at -1.75 -4.2325 90)
-		(size 2.965 2)
+	(pad "T" smd roundrect
+		(at -1.75 -3.9825 90)
+		(size 3.465 2.5)
 		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.15)
 		(uuid "a56e7302-b73b-44d2-97f1-9b102be64a6b")
 	)
 	(pad "T" thru_hole circle
@@ -407,10 +411,11 @@
 		(remove_unused_layers no)
 		(uuid "c2c0c45d-b754-413a-b087-835fdd0fe76f")
 	)
-	(pad "T" smd rect
-		(at -1.75 4.2325 90)
-		(size 2.965 2)
+	(pad "T" smd roundrect
+		(at -1.75 3.9825 90)
+		(size 3.465 2.5)
 		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.15)
 		(uuid "7d31118a-da8d-4a34-8fb1-fadf1ee781df")
 	)
 	(model "${KIPRJMOD}/Audio-jacks Libraries/SJ2-3514A-SMT-TR.stp"
