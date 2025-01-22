@@ -1,0 +1,153 @@
+(footprint "Joystick_module_lifted"
+	(version 20240108)
+	(generator "pcbnew")
+	(generator_version "8.0")
+	(layer "F.Cu")
+	(property "Reference" "REF**"
+		(at 14 10.4 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "c0da47dc-b015-4ae7-8e4b-7b96a2512562")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+		)
+	)
+	(property "Value" "Joystick_module_lifted"
+		(at 13.8 12 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "885cd3e2-08bd-4b5d-b381-43f8875e533f")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Footprint" ""
+		(at 12.9 8.6 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "83cc782f-634a-47ea-a8c9-b0fa9cd232e0")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 12.9 8.6 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "9557081a-c9d1-4667-92ff-50838f239641")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 12.9 8.6 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "a85e94d5-8d88-46e0-a8f9-7fe24162eb09")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_rect
+		(start -2.5 -3.5)
+		(end 31.5 22.9)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(fill none)
+		(layer "F.SilkS")
+		(uuid "718438c0-0bc7-40e0-873a-325d90a6cb35")
+	)
+	(fp_circle
+		(center 14 10.4)
+		(end 21.5 10.4)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(fill none)
+		(layer "F.SilkS")
+		(uuid "988cd505-7942-44b7-9abc-26f15c90a92f")
+	)
+	(fp_circle
+		(center 14 10.4)
+		(end 26.5 10.4)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(fill none)
+		(layer "F.SilkS")
+		(uuid "311b2e2d-4b8d-4668-bb3d-4562d315ac97")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 14 13.8 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "7fd6156b-ea15-4ff2-a8b1-4b1752449028")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "" np_thru_hole circle
+		(at 0 0)
+		(size 3.2 3.2)
+		(drill 3.2)
+		(layers "*.Cu" "*.Mask")
+		(uuid "ef889e2d-d1ee-4551-8e73-62e2979e14ec")
+	)
+	(pad "" np_thru_hole circle
+		(at 0 20.1)
+		(size 3.2 3.2)
+		(drill 3.2)
+		(layers "*.Cu" "*.Mask")
+		(uuid "42a1f54f-f27e-4d9b-8fa0-221f3af17ce7")
+	)
+	(pad "" np_thru_hole circle
+		(at 26.5 0)
+		(size 3.2 3.2)
+		(drill 3.2)
+		(layers "*.Cu" "*.Mask")
+		(uuid "dcde5e97-f0cc-48dc-aca2-6444687e1e21")
+	)
+	(pad "" np_thru_hole circle
+		(at 26.5 20.1)
+		(size 3.2 3.2)
+		(drill 3.2)
+		(layers "*.Cu" "*.Mask")
+		(uuid "fc575177-ac42-4bba-a419-a2b2a642f903")
+	)
+	(model "${KIPRJMOD}/Audio-jacks Libraries/mini_Joystick-Module.stp"
+		(offset
+			(xyz 14 -11.1 11.5)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 180)
+		)
+	)
+)

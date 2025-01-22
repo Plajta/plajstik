@@ -219,6 +219,17 @@
 		(layer "F.SilkS")
 		(uuid "b09c3444-c10c-43fb-8167-a8bead68b698")
 	)
+	(fp_rect
+		(start -1.7 -7.1)
+		(end 1.7 -5.9)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill solid)
+		(layer "Dwgs.User")
+		(uuid "a565f098-c829-4e39-8aaa-a0d946a0e558")
+	)
 	(fp_line
 		(start -5.4 -9.65)
 		(end -5.4 5.6)
@@ -410,15 +421,15 @@
 		(roundrect_rratio 0.1666666667)
 		(uuid "8d86e82a-2779-46e6-8bcd-1ddba6caeb48")
 	)
-	(model "${KICAD8_3DMODEL_DIR}/Connector_Audio.3dshapes/Jack_3.5mm_PJ31060-I_Horizontal.wrl"
+	(model "${KIPRJMOD}/Audio-jacks Libraries/PJ311D_WOPos.STEP"
 		(offset
-			(xyz 0 0 0)
+			(xyz 0 7 0)
 		)
 		(scale
 			(xyz 1 1 1)
 		)
 		(rotate
-			(xyz 0 0 0)
+			(xyz 90 -180 0)
 		)
 	)
 )
